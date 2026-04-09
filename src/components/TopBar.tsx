@@ -5,6 +5,7 @@ import { RootState } from '../store/store';
 import { DayOfWeek, TimeSlot } from '../lib/dateUtils';
 import { setLocation, setDayOfWeek, setTimeSlot } from '../features/event/eventSlice';
 import { MapPin, Clock, Calendar } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const slots: TimeSlot[] = ['Morning', 'Afternoon', 'Evening'];
@@ -13,13 +14,17 @@ export default function TopBar() {
   const dispatch = useDispatch();
   const { location, dayOfWeek, timeSlot } = useSelector((state: RootState) => state.event);
   const [locInput, setLocInput] = useState(location);
+  const insets = useSafeAreaInsets();
 
   const handleLocationSubmit = () => {
     dispatch(setLocation(locInput));
   };
 
   return (
-    <View className="p-4 bg-white border-b border-gray-200">
+    <View 
+      className="px-4 pb-4 bg-white border-b border-gray-200"
+      style={{ paddingTop: Math.max(insets.top, 16) }}
+    >
       <View className="flex-row flex-wrap items-center justify-between gap-4">
         
         {/* Location Input */}
