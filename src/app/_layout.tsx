@@ -1,12 +1,13 @@
+import "../polyfill";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Inter_400Regular, Inter_700Bold } from "@expo-google-fonts/inter";
+import { Outfit_400Regular, Outfit_700Bold } from "@expo-google-fonts/outfit";
 import {
 	DarkTheme,
 	DefaultTheme,
 	ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Inter_400Regular, Inter_700Bold } from "@expo-google-fonts/inter";
-import { Outfit_400Regular, Outfit_700Bold } from "@expo-google-fonts/outfit";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";

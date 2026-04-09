@@ -1,8 +1,12 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchInitialLocation } from "@/features/event/eventSlice";
 import { getSlotBounds, getUpcomingDates } from "@/lib/dateUtils";
-import { analyzeWeatherWindow, type WeatherSummary } from "@/lib/weatherAnalyzer";
+import {
+	analyzeWeatherWindow,
+	type WeatherSummary,
+} from "@/lib/weatherAnalyzer";
 import { useGetForecastQuery } from "@/store/api";
 import type { AppDispatch, RootState } from "@/store/store";
 
@@ -14,6 +18,7 @@ export interface WeatherComparisonState {
 	nextWeekResult: WeatherSummary | null;
 	thisWeekDate: Date | null;
 	nextWeekDate: Date | null;
+	isAnalyzing: boolean;
 	selectedWeek: "this" | "next";
 	isReady: boolean;
 }
@@ -27,7 +32,8 @@ export interface WeatherComparisonContextValue {
 	actions: WeatherComparisonActions;
 }
 
-const WeatherComparisonContext = createContext<WeatherComparisonContextValue | null>(null);
+const WeatherComparisonContext =
+	createContext<WeatherComparisonContextValue | null>(null);
 
 export function useWeatherComparisonContext() {
 	const context = useContext(WeatherComparisonContext);
@@ -60,15 +66,27 @@ export function WeatherComparisonProvider({
 		skip: !location,
 	});
 
-	const { thisWeekResult, nextWeekResult, thisWeekDate, nextWeekDate } =
-		useMemo(() => {
-			if (!data?.days)
-				return {
-					thisWeekResult: null,
-					nextWeekResult: null,
-					thisWeekDate: null,
-					nextWeekDate: null,
-				};
+	const [thisWeekResult, setThisWeekResult] = useState<WeatherSummary | null>(
+		null,
+	);
+	const [nextWeekResult, setNextWeekResult] = useState<WeatherSummary | null>(
+		null,
+	);
+	const [thisWeekDate, setThisWeekDate] = useState<Date | null>(null);
+	const [nextWeekDate, setNextWeekDate] = useState<Date | null>(null);
+	const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+	useEffect(() => {
+		let isCancelled = false;
+
+		const analyze = async () => {
+			if (!data?.days) {
+				setThisWeekResult(null);
+				setNextWeekResult(null);
+				setThisWeekDate(null);
+				setNextWeekDate(null);
+				return;
+			}
 
 			const [thisWeek, nextWeek] = getUpcomingDates(dayOfWeek);
 
@@ -85,40 +103,45 @@ export function WeatherComparisonProvider({
 			);
 
 			if (!thisWeekMatch || !nextWeekMatch) {
-				return {
-					thisWeekResult: null,
-					nextWeekResult: null,
-					thisWeekDate: thisWeek,
-					nextWeekDate: nextWeek,
-				};
+				setThisWeekResult(null);
+				setNextWeekResult(null);
+				setThisWeekDate(thisWeek);
+				setNextWeekDate(nextWeek);
+				return;
 			}
 
+			setIsAnalyzing(true);
 			const [start, end] = getSlotBounds(thisWeek, timeSlot);
 			const startHour = start.getHours();
 			const endHour = end.getHours();
 
-			const thisWeekResult = analyzeWeatherWindow(
-				thisWeekMatch,
-				startHour,
-				endHour,
-			);
-			const nextWeekResult = analyzeWeatherWindow(
-				nextWeekMatch,
-				startHour,
-				endHour,
-				true,
-			);
+			try {
+				const [thisResult, nextResult] = await Promise.all([
+					analyzeWeatherWindow(thisWeekMatch, startHour, endHour),
+					analyzeWeatherWindow(nextWeekMatch, startHour, endHour, true),
+				]);
 
-			return {
-				thisWeekResult,
-				nextWeekResult,
-				thisWeekDate: thisWeek,
-				nextWeekDate: nextWeek,
-			};
-		}, [data, dayOfWeek, timeSlot]);
+				if (!isCancelled) {
+					setThisWeekResult(thisResult);
+					setNextWeekResult(nextResult);
+					setThisWeekDate(thisWeek);
+					setNextWeekDate(nextWeek);
+				}
+			} finally {
+				if (!isCancelled) setIsAnalyzing(false);
+			}
+		};
+
+		analyze();
+
+		return () => {
+			isCancelled = true;
+		};
+	}, [data, dayOfWeek, timeSlot]);
 
 	const isReady = !!(
 		!isFetching &&
+		!isAnalyzing &&
 		!error &&
 		thisWeekResult &&
 		nextWeekResult &&
@@ -130,6 +153,7 @@ export function WeatherComparisonProvider({
 		state: {
 			location,
 			isFetching,
+			isAnalyzing,
 			error,
 			thisWeekResult,
 			nextWeekResult,
