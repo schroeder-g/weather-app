@@ -35,7 +35,7 @@ export default function ForecastChart({ data }: Props) {
     ? screenHeight * 0.5
     : Math.min(screenHeight * 0.5, 400);
 
-  const margin = useMemo(() => ({ top: 40, right: 20, bottom: 30, left: 30 }), []);
+  const margin = useMemo(() => ({ top: 20, right: 20, bottom: 30, left: 30 }), []);
 
   const onLayout = (event: any) => {
     setWidth(event.nativeEvent.layout.width);
@@ -115,7 +115,7 @@ export default function ForecastChart({ data }: Props) {
 
   return (
     <View
-      className="my-4"
+      className="mt-0 mb-4"
       onLayout={onLayout}
       testID="forecast-chart-container"
     >

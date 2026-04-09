@@ -14,7 +14,7 @@ export function Root({
 }: RootProps) {
 	return (
 		<ComparisonPanelContext value={{ summary }}>
-			<View className="w-full sm:flex-1 mb-[24px] min-w-[280px]">
+			<View className="w-full sm:flex-1 min-w-[280px]">
 				<View className="p-4 rounded-2xl overflow-hidden bg-transparent">
 					{children}
 				</View>

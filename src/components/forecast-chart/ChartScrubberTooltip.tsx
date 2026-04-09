@@ -56,7 +56,7 @@ const ChartScrubberTooltip = memo(() => {
 
       <Rect
         x={x - 45}
-        y={-40}
+        y={-20}
         width={90}
         height={40}
         rx={6}
@@ -64,7 +64,7 @@ const ChartScrubberTooltip = memo(() => {
       />
       <SvgText
         x={x}
-        y={-25}
+        y={-5}
         fill="white"
         fontSize="12"
         textAnchor="middle"
@@ -74,7 +74,7 @@ const ChartScrubberTooltip = memo(() => {
       </SvgText>
       <SvgText
         x={x}
-        y={-6}
+        y={14}
         fill={palette.zinc[300]}
         fontSize="10"
         textAnchor="middle"

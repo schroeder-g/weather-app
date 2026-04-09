@@ -35,7 +35,7 @@ function WeatherLayout() {
 			<ScrollView
 				className="flex-1 px-4 py-6"
 				contentContainerStyle={{
-					paddingBottom: 100,
+					paddingBottom: 80,
 					maxWidth: 1200,
 					alignSelf: "center",
 					width: "100%",
@@ -80,7 +80,7 @@ function WeatherLayout() {
 					>
 						<Animated.View
 							layout={LinearTransition.springify()}
-							className="mt-2 mb-2"
+							className="my-1"
 						>
 							<ComparisonPanel.Root
 								summary={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
@@ -95,7 +95,7 @@ function WeatherLayout() {
 							</ComparisonPanel.Root>
 						</Animated.View>
 
-						<View className="mb-4 z-10 flex-row justify-start items-start">
+						<View className="my-1 z-10 flex-row justify-start items-start">
 							<Tabs 
 								value={selectedWeek} 
 								onValueChange={(val) => actions.setSelectedWeek(val as "this" | "next")}
