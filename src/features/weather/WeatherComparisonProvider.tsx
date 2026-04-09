@@ -23,6 +23,10 @@ export interface WeatherComparisonState {
 	selectedWeek: "this" | "next";
 	isReady: boolean;
 	activeCurves: DataCurveType[];
+	activeResult: WeatherSummary | null;
+	activeDate: Date | null;
+	activeTitle: string;
+	activePrefix: string;
 }
 
 export interface WeatherComparisonActions {
@@ -162,8 +166,37 @@ export function WeatherComparisonProvider({
 		nextWeekDate
 	);
 
-	const value = {
-		state: {
+	const activeResult =
+		selectedWeek === "this" ? thisWeekResult : nextWeekResult;
+	const activeDate = selectedWeek === "this" ? thisWeekDate : nextWeekDate;
+	const activeTitle = selectedWeek === "this" ? "This Week" : "Next Week";
+	const activePrefix = selectedWeek === "this" ? "This " : "Next ";
+
+	const value = useMemo(
+		() => ({
+			state: {
+				location,
+				isFetching,
+				isAnalyzing,
+				error,
+				thisWeekResult,
+				nextWeekResult,
+				thisWeekDate,
+				nextWeekDate,
+				selectedWeek,
+				isReady,
+				activeCurves,
+				activeResult,
+				activeDate,
+				activeTitle,
+				activePrefix,
+			},
+			actions: {
+				setSelectedWeek,
+				toggleCurve,
+			},
+		}),
+		[
 			location,
 			isFetching,
 			isAnalyzing,
@@ -175,12 +208,12 @@ export function WeatherComparisonProvider({
 			selectedWeek,
 			isReady,
 			activeCurves,
-		},
-		actions: {
-			setSelectedWeek,
-			toggleCurve,
-		},
-	};
+			activeResult,
+			activeDate,
+			activeTitle,
+			activePrefix,
+		],
+	);
 
 	return (
 		<WeatherComparisonContext.Provider value={value}>

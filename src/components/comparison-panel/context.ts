@@ -3,6 +3,8 @@ import type { WeatherSummary } from "@/lib/weatherAnalyzer";
 
 export interface ComparisonPanelContextValue {
 	summary: WeatherSummary;
+	date: Date;
+	title: string;
 }
 
 export const ComparisonPanelContext =

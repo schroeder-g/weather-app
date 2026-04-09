@@ -3,13 +3,8 @@ import { Text, View } from "react-native";
 import { FormattedDate, formatTimeWindow } from "@/components/ui/FormattedDate";
 import { useComparisonPanelContext } from "./context";
 
-interface HeaderProps {
-	title: string;
-	date: Date;
-}
-
-export function Header({ title, date }: HeaderProps) {
-	const { summary } = useComparisonPanelContext();
+export function Header() {
+	const { summary, date, title } = useComparisonPanelContext();
 	const timeWindow = formatTimeWindow(
 		summary.windowStartHour,
 		summary.windowEndHour,
