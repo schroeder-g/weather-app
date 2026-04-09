@@ -4,7 +4,6 @@ import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanim
 
 import ComparisonPanel from "@/components/comparison-panel";
 import ForecastChart from "@/components/ForecastChart";
-import MessageBlast from "@/components/MessageBlast";
 import TopBar from "@/components/TopBar";
 import ChartLegendPopover from "@/components/forecast-chart/ChartLegendPopover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -127,8 +126,6 @@ function WeatherLayout() {
 							</Text>
 							<ChartLegendPopover />
 						</View>
-
-						<MessageBlast />
 					</Animated.View>
 				)}
 			</ScrollView>
