@@ -2,57 +2,112 @@ import {
 	analyzeWeatherWindow,
 	generateMessage,
 	getRecommendation,
-	HourlyData,
+	type HourlyData,
+	type WindowMetrics,
 } from "@/lib/weatherAnalyzer";
 
 describe("weatherAnalyzer", () => {
-	const createMockHours = (temp: number, precip: number, wind: number) => {
+	const createMockHours = (temp: number, precip: number, wind: number, extras?: Partial<HourlyData>): HourlyData[] => {
 		return Array.from({ length: 24 }).map((_, i) => ({
 			datetime: `${i.toString().padStart(2, "0")}:00:00`,
 			temp,
 			precipprob: precip,
 			windspeed: wind,
+			uvindex: 0,
+			cloudcover: 0,
+			severerisk: 0,
+			icon: "clear-day",
+			conditions: "Clear",
+			...extras
 		}));
 	};
 
 	describe("analyzeWeatherWindow", () => {
-		it("aggregates stats for the specific time window", () => {
-			const hours = createMockHours(65, 10, 5);
-			hours[9].temp = 70; // 9 AM
-			hours[10].temp = 75; // 10 AM
+		it("aggregates extended stats for the specific time window", () => {
+			const hours = createMockHours(65, 10, 5, { uvindex: 2, cloudcover: 10, severerisk: 0 });
+			hours[9].temp = 70;
+			hours[9].uvindex = 8;
+			hours[10].temp = 75;
 			hours[10].precipprob = 20;
+			hours[10].severerisk = 10;
+			hours[10].icon = "partly-cloudy-day";
+			hours[10].conditions = "Partially cloudy";
 
 			const result = analyzeWeatherWindow({ hours } as any, 8, 12);
 			expect(result.minTemp).toBe(65);
 			expect(result.maxTemp).toBe(75);
-			expect(result.avgPrecipProb).toBeGreaterThanOrEqual(12); // (10+10+20+10) / 4
-			expect(result.points.length).toBe(5); // 8,9,10,11,12 inclusive
+			expect(result.avgPrecipProb).toBeGreaterThanOrEqual(12);
+			expect(result.maxUvIndex).toBe(8);
+			expect(result.maxSevereRisk).toBe(10);
+			expect(result.primaryIcon).toBe("partly-cloudy-day");
+			expect(result.primaryConditions).toBe("Partially cloudy");
+		});
+
+		it("passes through isLongRange flag", () => {
+			const hours = createMockHours(65, 10, 5);
+			const result = analyzeWeatherWindow({ hours } as any, 8, 12, true);
+			expect(result.isLongRange).toBe(true);
 		});
 	});
 
 	describe("getRecommendation", () => {
-		it("returns Good for ideal weather", () => {
-			expect(getRecommendation(65, 70, 0, 5)).toBe("Good");
+		it("returns Ideal for perfect weather", () => {
+			const metrics: WindowMetrics = { minTemp: 65, maxTemp: 75, avgPrecipProb: 0, maxWindSpeed: 5, maxUvIndex: 2, maxSevereRisk: 0, avgCloudCover: 0 };
+			expect(getRecommendation(metrics)).toBe("Ideal");
 		});
 
-		it("returns Postpone Candidate for high rain", () => {
-			expect(getRecommendation(60, 65, 60, 5)).toBe("Postpone Candidate");
+		it("returns Pleasant for good weather but high UV", () => {
+			const metrics: WindowMetrics = { minTemp: 70, maxTemp: 80, avgPrecipProb: 0, maxWindSpeed: 5, maxUvIndex: 9, maxSevereRisk: 0, avgCloudCover: 0 };
+			expect(getRecommendation(metrics)).toBe("Pleasant");
 		});
 
-		it("returns Mixed for high wind", () => {
-			expect(getRecommendation(60, 65, 0, 20)).toBe("Mixed");
+		it("returns Mixed for high wind or moderate rain", () => {
+			const metrics: WindowMetrics = { minTemp: 60, maxTemp: 65, avgPrecipProb: 30, maxWindSpeed: 10, maxUvIndex: 2, maxSevereRisk: 0, avgCloudCover: 50 };
+			expect(getRecommendation(metrics)).toBe("Mixed");
+		});
+
+		it("returns Poor for heavy rain or cold", () => {
+			const metrics: WindowMetrics = { minTemp: 45, maxTemp: 50, avgPrecipProb: 10, maxWindSpeed: 20, maxUvIndex: 1, maxSevereRisk: 0, avgCloudCover: 100 };
+			expect(getRecommendation(metrics)).toBe("Poor");
+		});
+
+		it("returns Warning for severe risk", () => {
+			const metrics: WindowMetrics = { minTemp: 60, maxTemp: 65, avgPrecipProb: 60, maxWindSpeed: 5, maxUvIndex: 2, maxSevereRisk: 25, avgCloudCover: 80 };
+			expect(getRecommendation(metrics)).toBe("Warning (Postpone)");
+		});
+
+		it("long range: only returns Warning for severe risk > 55", () => {
+			const metrics: WindowMetrics = { minTemp: 60, maxTemp: 65, avgPrecipProb: 0, maxWindSpeed: 5, maxUvIndex: 2, maxSevereRisk: 40, avgCloudCover: 0 };
+			// 40 would be warning on short range
+			expect(getRecommendation(metrics)).toBe("Warning (Postpone)");
+			// But not on long range
+			expect(getRecommendation(metrics, true)).not.toBe("Warning (Postpone)");
+			
+			// 60 is above 55
+			metrics.maxSevereRisk = 60;
+			expect(getRecommendation(metrics, true)).toBe("Warning (Postpone)");
 		});
 	});
 
 	describe("generateMessage", () => {
-		it("returns absolutely gorgeous for 60-75 and low precip", () => {
-			expect(generateMessage(65, 70, 0, 5)).toBe(
-				"Absolutely gorgeous conditions expected.",
-			);
+		it("returns warning for severe risk", () => {
+			const metrics: WindowMetrics = { minTemp: 65, maxTemp: 70, avgPrecipProb: 60, maxWindSpeed: 5, maxUvIndex: 2, maxSevereRisk: 20, avgCloudCover: 90 };
+			expect(generateMessage(metrics)).toContain("Severe weather risk");
 		});
 
-		it("returns chance of rain for high precip", () => {
-			expect(generateMessage(65, 70, 60, 5)).toContain("Chance of rain");
+		it("mentions UV index if it is extreme", () => {
+			const metrics: WindowMetrics = { minTemp: 85, maxTemp: 92, avgPrecipProb: 0, maxWindSpeed: 5, maxUvIndex: 11, maxSevereRisk: 0, avgCloudCover: 0 };
+			expect(generateMessage(metrics)).toContain("Extreme UV risk");
+		});
+		
+		it("mentions absolutely gorgeous for optimal conditions", () => {
+			const metrics: WindowMetrics = { minTemp: 65, maxTemp: 75, avgPrecipProb: 0, maxWindSpeed: 5, maxUvIndex: 5, maxSevereRisk: 0, avgCloudCover: 20 };
+			expect(generateMessage(metrics)).toBe("Absolutely gorgeous conditions expected.");
+		});
+
+		it("returns speculative phrasing for long range", () => {
+			const metrics: WindowMetrics = { minTemp: 65, maxTemp: 75, avgPrecipProb: 0, maxWindSpeed: 5, maxUvIndex: 5, maxSevereRisk: 0, avgCloudCover: 20 };
+			expect(generateMessage(metrics, true)).toBe("Models are hinting at gorgeous conditions.");
 		});
 	});
 });
