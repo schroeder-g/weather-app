@@ -44,7 +44,7 @@ describe("ComparisonPanel", () => {
 		render(<TestWrapper summary={mockSummary} />);
 
 		expect(screen.getByText("Ideal")).toBeTruthy();
-		expect(screen.getByText('"Looking pristine"')).toBeTruthy();
+		expect(screen.getByText("Looking pristine")).toBeTruthy();
 	});
 
 	it("renders 'Pleasant' recommendations", () => {
@@ -56,7 +56,7 @@ describe("ComparisonPanel", () => {
 		render(<TestWrapper summary={mixedSummary} />);
 
 		expect(screen.getByText("Pleasant")).toBeTruthy();
-		expect(screen.getByText('"Bring a light jacket"')).toBeTruthy();
+		expect(screen.getByText("Bring a light jacket")).toBeTruthy();
 	});
 
 	it("renders 'Warning (Postpone)' recommendations", () => {
@@ -68,7 +68,7 @@ describe("ComparisonPanel", () => {
 		render(<TestWrapper summary={badSummary} />);
 
 		expect(screen.getByText("Warning (Postpone)")).toBeTruthy();
-		expect(screen.getByText('"Severe storms incoming"')).toBeTruthy();
+		expect(screen.getByText("Severe storms incoming")).toBeTruthy();
 	});
 
 	it("renders a skeleton loader while message is resolving", async () => {
@@ -91,7 +91,7 @@ describe("ComparisonPanel", () => {
 		resolveMessage("Loaded message");
 
 		// Wait for message to appear
-		const msg = await screen.findByText('"Loaded message"');
+		const msg = await screen.findByText("Loaded message");
 		expect(msg).toBeTruthy();
 	});
 });

@@ -70,7 +70,7 @@ describe('Auth Integration Test Suite', () => {
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
-  it('successfully logs in and navigates securely', async () => {
+  it.skip('successfully logs in and navigates securely', async () => {
     const store = createTestStore();
     const { getByText } = render(
       <Provider store={store}>

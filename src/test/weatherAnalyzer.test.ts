@@ -7,6 +7,16 @@ import {
 } from "@/lib/weatherAnalyzer";
 
 describe("weatherAnalyzer", () => {
+	const getFullMessage = async (
+		generator: AsyncGenerator<string, void, unknown>,
+	) => {
+		let full = "";
+		for await (const chunk of generator) {
+			full += chunk;
+		}
+		return full;
+	};
+
 	const createMockHours = (
 		temp: number,
 		precip: number,
@@ -157,7 +167,7 @@ describe("weatherAnalyzer", () => {
 				maxSevereRisk: 20,
 				avgCloudCover: 90,
 			};
-			expect(await generateMessage(metrics)).toContain("Severe weather risk");
+			expect(await getFullMessage(generateMessage(metrics))).toContain("Severe weather risk");
 		});
 
 		it("mentions UV index if it is extreme", async () => {
@@ -170,7 +180,7 @@ describe("weatherAnalyzer", () => {
 				maxSevereRisk: 0,
 				avgCloudCover: 0,
 			};
-			expect(await generateMessage(metrics)).toContain("Extreme UV risk");
+			expect(await getFullMessage(generateMessage(metrics))).toContain("Extreme UV risk");
 		});
 
 		it("mentions absolutely gorgeous for optimal conditions", async () => {
@@ -183,7 +193,7 @@ describe("weatherAnalyzer", () => {
 				maxSevereRisk: 0,
 				avgCloudCover: 20,
 			};
-			expect(await generateMessage(metrics)).toBe(
+			expect(await getFullMessage(generateMessage(metrics))).toBe(
 				"Absolutely gorgeous conditions expected.",
 			);
 		});
@@ -198,7 +208,7 @@ describe("weatherAnalyzer", () => {
 				maxSevereRisk: 0,
 				avgCloudCover: 20,
 			};
-			expect(await generateMessage(metrics, true)).toBe(
+			expect(await getFullMessage(generateMessage(metrics, true))).toBe(
 				"Models are hinting at gorgeous conditions.",
 			);
 		});

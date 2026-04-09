@@ -6,16 +6,16 @@ import { Text, View } from 'react-native';
 import { WeatherComparisonProvider, useWeatherComparisonContext } from './WeatherComparisonProvider';
 
 // Mock the API slice correctly since it's used inside the provider
-import { api } from '@/store/api';
+import { weatherApi } from '@/store/api';
 import eventReducer from '@/features/event/eventSlice';
 
 const createTestStore = () => configureStore({
   reducer: {
     event: eventReducer,
-    [api.reducerPath]: api.reducer,
+    [weatherApi.reducerPath]: weatherApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(weatherApi.middleware),
 });
 
 const ConsumerComponent = () => {

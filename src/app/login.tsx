@@ -23,7 +23,7 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 bg-background justify-center px-6">
-      <Animated.View entering={FadeInUp.duration(500)} className="items-center mb-12">
+      <Animated.View entering={FadeInUp?.duration ? FadeInUp.duration(500) : undefined} className="items-center mb-12">
         <Text className="text-red-500 font-black text-4xl tracking-widest uppercase mb-4">
           Whether.io
         </Text>
@@ -32,7 +32,7 @@ export default function LoginScreen() {
         </Text>
       </Animated.View>
 
-      <Animated.View entering={FadeInUp.delay(100).duration(500)}>
+      <Animated.View entering={FadeInUp?.delay ? FadeInUp.delay(100).duration(500) : undefined}>
         <TouchableOpacity
           onPress={handleLogin}
           disabled={status === 'loading'}
