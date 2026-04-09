@@ -2,11 +2,11 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useRef } from "react";
 import { PanResponder } from "react-native";
 import { calculateScrubberData } from "@/lib/scrubberUtils";
-import { useChartContext } from "./ChartContext";
+import { useChartContext, useChartScrubberContext } from "./ChartContext";
 
 export function useChartScrubber() {
-	const { innerWidth, margin, displayPoints, setScrubberIndex } =
-		useChartContext();
+	const { innerWidth, margin, displayPoints } = useChartContext();
+	const { setScrubberIndex } = useChartScrubberContext();
 	const pointsCount = displayPoints.length;
 
 	const stateRef = useRef({ innerWidth, pointsCount, displayPoints, margin });

@@ -17,13 +17,16 @@ interface ChartContextValue {
 	// Scales
 	xScale: d3.ScaleLinear<number, number>;
 	yScale: d3.ScaleLinear<number, number>;
+}
 
-	// Scrubber State
+// --- Scrubber State Context ---
+interface ChartScrubberContextValue {
 	scrubberIndex: number | null;
 	setScrubberIndex: (index: number | null) => void;
 }
 
 const ChartContext = createContext<ChartContextValue | null>(null);
+const ChartScrubberContext = createContext<ChartScrubberContextValue | null>(null);
 
 export function useChartContext() {
 	const context = useContext(ChartContext);
@@ -33,28 +36,47 @@ export function useChartContext() {
 	return context;
 }
 
-interface ChartProviderProps
-	extends Omit<ChartContextValue, "scrubberIndex" | "setScrubberIndex"> {
+export function useChartScrubberContext() {
+	const context = useContext(ChartScrubberContext);
+	if (!context) {
+		throw new Error("useChartScrubberContext must be used within a ChartProvider");
+	}
+	return context;
+}
+
+interface ChartProviderProps extends ChartContextValue {
 	children: React.ReactNode;
 }
 
 export const ChartProvider = React.memo(
-	({ children, ...value }: ChartProviderProps) => {
+	({ children, ...valueProps }: ChartProviderProps) => {
 		const [scrubberIndex, setScrubberIndex] = useState<number | null>(null);
 
-		// Bundle the scrubber stat along with primitive config
-		const contextValue = React.useMemo(
+		const scrubberValue = React.useMemo(
 			() => ({
-				...value,
 				scrubberIndex,
 				setScrubberIndex,
 			}),
-			[value, scrubberIndex, setScrubberIndex],
+			[scrubberIndex, setScrubberIndex],
 		);
 
+		// Memoizing the spread object is critical to prevent Context churn
+		const staticValue = React.useMemo(() => valueProps, [
+			valueProps.innerWidth,
+			valueProps.innerHeight,
+			valueProps.margin,
+			valueProps.displayPoints,
+			valueProps.windowStartHour,
+			valueProps.windowEndHour,
+			valueProps.xScale,
+			valueProps.yScale,
+		]);
+
 		return (
-			<ChartContext.Provider value={contextValue}>
-				{children}
+			<ChartContext.Provider value={staticValue}>
+				<ChartScrubberContext.Provider value={scrubberValue}>
+					{children}
+				</ChartScrubberContext.Provider>
 			</ChartContext.Provider>
 		);
 	},

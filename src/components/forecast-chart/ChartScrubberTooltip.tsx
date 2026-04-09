@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Circle, G, Line, Rect, Text as SvgText } from "react-native-svg";
 import { calculateScrubberData } from "@/lib/scrubberUtils";
 import { baseColors, palette } from "@/themes/config";
-import { useChartContext } from "./ChartContext";
+import { useChartContext, useChartScrubberContext } from "./ChartContext";
 
 const formatScrubTime = (timeStr: string) => {
 	if (!timeStr) return "";
@@ -14,8 +14,8 @@ const formatScrubTime = (timeStr: string) => {
 };
 
 const ChartScrubberTooltip = memo(() => {
-	const { scrubberIndex, displayPoints, xScale, yScale, innerHeight } =
-		useChartContext();
+	const { scrubberIndex } = useChartScrubberContext();
+	const { displayPoints, xScale, yScale, innerHeight } = useChartContext();
 
 	if (scrubberIndex === null) return null;
 
