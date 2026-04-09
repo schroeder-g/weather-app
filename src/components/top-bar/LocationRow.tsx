@@ -26,18 +26,18 @@ export function LocationRow() {
 	return (
 		<View className="flex-row items-center gap-3 pr-4">
 			{isLocating ? (
-				<ActivityIndicator color="#1f2937" size="small" />
+				<ActivityIndicator className="text-foreground" size="small" />
 			) : (
-				<MapPin color="#1f2937" size={26} />
+				<MapPin className="text-foreground" size={26} />
 			)}
 			<TextInput
-				className="flex-1 text-2xl font-bold text-gray-900 outline-none"
+				className="flex-1 text-2xl font-bold text-foreground outline-none"
 				value={locInput}
 				onChangeText={setLocInput}
 				onSubmitEditing={handleLocationSubmit}
 				onBlur={handleLocationSubmit}
 				placeholder="Choose location"
-				placeholderTextColor="#9ca3af"
+				placeholderTextColor="var(--muted-foreground)"
 				editable={!isLocating}
 			/>
 		</View>

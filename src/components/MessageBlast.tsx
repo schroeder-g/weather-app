@@ -25,18 +25,18 @@ See you there!`;
 	return (
 		<View className="my-6">
 			<View className="flex-row items-center justify-between mb-4">
-				<Text className="text-lg font-bold text-gray-800">Message Blast</Text>
+				<Text className="text-lg font-bold text-foreground">Message Blast</Text>
 				<Pressable
 					onPress={handleCopy}
-					className="flex-row items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg"
+					className="flex-row items-center gap-2 bg-secondary px-3 py-2 rounded-lg"
 				>
-					<Copy size={16} color="#4b5563" />
-					<Text className="text-sm font-semibold text-gray-700">Copy text</Text>
+					<Copy size={16} className="text-muted-foreground" />
+					<Text className="text-sm font-semibold text-muted-foreground">Copy text</Text>
 				</Pressable>
 			</View>
 
-			<View className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-				<Text className="text-gray-800 text-base leading-6">{blastText}</Text>
+			<View className="bg-card p-4 rounded-lg border border-border">
+				<Text className="text-foreground text-base leading-6">{blastText}</Text>
 			</View>
 		</View>
 	);

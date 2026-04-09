@@ -1,28 +1,32 @@
-import chroma from 'chroma-js';
-import { generatePalette } from './generator';
+import colors from 'tailwindcss/colors';
 
 export const staticColors = {
-	black: 'hsl(0, 0%, 0%)',
-	white: 'hsl(0, 0%, 100%)',
-	slate: 'hsl(210, 40%, 96%)',
+	black: '#000000',
+	white: '#ffffff',
+	slate: '#f1f5f9',
 } as const;
-
-// Equidistant trigonometric hues on the LCH color wheel
-const L = 65;
-const C = 75;
 
 export const chromaticColors = {
-	zinc: 'hsl(240, 5%, 65%)',
-	red: chroma.lch(L, C, 20).css('hsl'),
-	orange: chroma.lch(L, C, 50).css('hsl'),
-	yellow: chroma.lch(L, C, 90).css('hsl'),
-	green: chroma.lch(L, C, 140).css('hsl'),
-	cyan: chroma.lch(L, C, 200).css('hsl'),
-	blue: chroma.lch(L, C, 260).css('hsl'),
-	magenta: chroma.lch(L, C, 320).css('hsl')
+	zinc: colors.zinc[500],
+	red: colors.rose[500],
+	orange: colors.orange[500],
+	yellow: colors.yellow[500],
+	green: colors.green[500],
+	cyan: colors.cyan[500],
+	blue: colors.blue[500],
+	magenta: colors.fuchsia[500],
 } as const;
 
-export const palette = generatePalette(chromaticColors);
+export const palette = {
+	zinc: colors.zinc,
+	red: colors.rose,
+	orange: colors.orange,
+	yellow: colors.yellow,
+	green: colors.green,
+	cyan: colors.cyan,
+	blue: colors.blue,
+	magenta: colors.fuchsia,
+} as Record<string, Record<string | number, string>>;
 
 export const baseColors = {
 	...staticColors,
@@ -50,9 +54,9 @@ export const themes = {
 
 export const commonVars = {
 	'--radius': '0.5rem',
-	'--border': '1px solid color-mix(in srgb, var(--zinc-300), transparent 20%)',
-	'--input': '1px solid var(--zinc-300)',
-	'--ring': '0 0 0 3px color-mix(in srgb, var(--blue-500), transparent 70%)',
+	'--border': 'var(--zinc-100)',
+	'--input': 'var(--zinc-200)',
+	'--ring': 'var(--blue-500)',
 	'--destructive': 'var(--red-600)',
 	'--destructive-foreground': 'var(--white)',
 	'--success': 'var(--green-600)',

@@ -15,7 +15,7 @@ export function generateColorScale(hexOrHsl: string) {
 
 	steps.forEach((step) => {
 		const t = step / 1000;
-		entries[step] = scale(t).css('hsl');
+		entries[step] = scale(t).hex();
 	});
 
 	return entries;

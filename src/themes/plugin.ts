@@ -86,6 +86,9 @@ const themesPlugin = plugin(
 						DEFAULT: 'var(--card)',
 						foreground: 'var(--card-foreground)',
 					},
+					border: 'var(--border)',
+					input: 'var(--input)',
+					ring: 'var(--ring)',
 					...(() => {
 						const colors: Record<string, any> = {};
 						Object.keys(staticColors).forEach(name => {

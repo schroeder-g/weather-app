@@ -47,7 +47,7 @@ export function FiltersRow() {
 
 	return (
 		<View className="flex-row items-center gap-3">
-			<Clock color="#1f2937" size={24} />
+			<Clock className="text-foreground" size={24} />
 
 			<Select
 				onOpenChange={setIsDayOpen}
@@ -65,7 +65,7 @@ export function FiltersRow() {
 					onPressOut={() => setIsDayPressed(false)}
 				>
 					<SelectValue
-						className={`text-lg transition-colors duration-200 font-medium ${isDayPressed || isDayOpen ? 'text-blue-600' : 'text-gray-800'}`}
+						className={`text-lg transition-colors duration-200 font-medium ${isDayPressed || isDayOpen ? 'text-primary' : 'text-foreground'}`}
 						placeholder="Select..."
 					/>
 				</SelectTrigger>
@@ -93,7 +93,7 @@ export function FiltersRow() {
 					onPressOut={() => setIsTimePressed(false)}
 				>
 					<SelectValue
-						className={`text-lg transition-colors duration-200 font-medium ${isTimePressed || isTimeOpen ? 'text-blue-600' : 'text-gray-800'}`}
+						className={`text-lg transition-colors duration-200 font-medium ${isTimePressed || isTimeOpen ? 'text-primary' : 'text-foreground'}`}
 						placeholder="Select..."
 					/>
 				</SelectTrigger>

@@ -51,8 +51,8 @@ export default function RootLayout() {
 
 	if (!loaded) {
 		return (
-			<View className="flex-1 items-center justify-center bg-white dark:bg-black">
-				<Text className="text-red-500 font-black text-xl tracking-widest uppercase">
+			<View className="flex-1 items-center justify-center bg-background">
+				<Text className="text-primary font-black text-xl tracking-widest uppercase">
 					Whether.io
 				</Text>
 			</View>

@@ -30,17 +30,17 @@ export function TopBarHeader() {
 				</Text>
 				<DropdownMenu>
 					<DropdownMenuTrigger>
-						<Menu color="#1f2937" size={32} />
+						<Menu className="text-foreground" size={32} />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-48 native:w-56"
 						insets={contentInsets}
 					>
 						<DropdownMenuItem onPress={() => setIsHelpOpen(true)}>
-							<Text>Help</Text>
+							<Text className="text-foreground">Help</Text>
 						</DropdownMenuItem>
 						<DropdownMenuItem variant="destructive">
-							<Text className="text-red-500">Log out</Text>
+							<Text className="text-destructive">Log out</Text>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

@@ -39,7 +39,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
 								<Text>Location selector loads endlessly?</Text>
 							</AccordionTrigger>
 							<AccordionContent>
-								<Text className="text-gray-600">
+								<Text className="text-muted-foreground">
 									If the location spinner hangs indefinitely, check your
 									device's System Privacy settings. Ensure that your browser
 									(e.g., Chrome, Safari) has correct OS-level permission to
