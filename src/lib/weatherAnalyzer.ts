@@ -208,7 +208,7 @@ export function getRecommendation(
 const messageSignature = ax(`
 	minTemp:number, maxTemp:number, precipProb:number, maxWind:number, maxUv:number, severeRisk:number, recommendation:string, isLongRange:boolean 
 	-> 
-	message:string "A concise, friendly, and adroit 1-2 sentence message summarizing the conditions."
+	message:string "A fun, brief, personable 1-sentence message for event organizers about event viability. Focus on the vibe and if it's a go. Do NOT list specific weather stats."
 `);
 
 export async function* generateMessage(

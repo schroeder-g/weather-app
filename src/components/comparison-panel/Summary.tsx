@@ -81,7 +81,7 @@ export function Summary() {
 			{({ pressed }) => (
 				<View className={`flex-row items-start gap-2 transition-opacity duration-200 ${pressed ? "opacity-70" : "opacity-100"}`}>
 					<Text className="text-foreground italic leading-relaxed font-medium text-base flex-1">
-						{resolvedMessage ? `"${resolvedMessage}"` : ""}
+						{resolvedMessage ? resolvedMessage : ""}
 					</Text>
 					{resolvedMessage ? (
 						<View className="mt-1 opacity-60">
