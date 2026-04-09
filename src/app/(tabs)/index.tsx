@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import ComparisonPanel from "@/components/ComparisonPanel";
 import ForecastChart from "@/components/ForecastChart";
@@ -16,6 +17,8 @@ export default function TabOneScreen() {
 	const { location, dayOfWeek, timeSlot } = useSelector(
 		(state: RootState) => state.event,
 	);
+	
+	const [selectedWeek, setSelectedWeek] = useState<"this" | "next">("this");
 
 	useEffect(() => {
 		dispatch(fetchInitialLocation());
@@ -140,23 +143,36 @@ export default function TabOneScreen() {
 					nextWeekResult &&
 					thisWeekDate &&
 					nextWeekDate && (
-						<View>
-							<View className="flex-row flex-wrap sm:flex-nowrap justify-between gap-4 mt-2">
+						<Animated.View 
+							entering={FadeIn.duration(400)} 
+							exiting={FadeOut} 
+							layout={LinearTransition.springify()}
+						>
+							<Animated.View layout={LinearTransition.springify()} className="flex-row flex-wrap sm:flex-nowrap justify-between gap-4 mt-2 mb-2">
 								<ComparisonPanel
 									title="This Week"
 									date={thisWeekDate}
 									summary={thisWeekResult}
+									isSelected={selectedWeek === "this"}
+									onPress={() => setSelectedWeek("this")}
 								/>
 								<ComparisonPanel
 									title="Next Week"
 									date={nextWeekDate}
 									summary={nextWeekResult}
+									isSelected={selectedWeek === "next"}
+									onPress={() => setSelectedWeek("next")}
 								/>
-							</View>
+							</Animated.View>
+
+							<Text className="text-2xl font-bold text-center mt-4 mb-2 text-gray-800">
+								{selectedWeek === "this"
+									? thisWeekDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+									: nextWeekDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+							</Text>
 
 							<ForecastChart
-								thisWeek={thisWeekResult}
-								nextWeek={nextWeekResult}
+								data={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
 							/>
 
 							<MessageBlast
@@ -164,7 +180,7 @@ export default function TabOneScreen() {
 								dateStr={blastDateStr || ""}
 								summaryMsg={blastSummary || ""}
 							/>
-						</View>
+						</Animated.View>
 					)}
 			</ScrollView>
 		</View>

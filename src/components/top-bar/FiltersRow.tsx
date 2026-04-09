@@ -1,5 +1,5 @@
 import { Clock } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,6 +33,10 @@ export function FiltersRow() {
 		(state: RootState) => state.event,
 	);
 	const insets = useSafeAreaInsets();
+	const [isDayPressed, setIsDayPressed] = useState(false);
+	const [isTimePressed, setIsTimePressed] = useState(false);
+	const [isDayOpen, setIsDayOpen] = useState(false);
+	const [isTimeOpen, setIsTimeOpen] = useState(false);
 
 	const contentInsets = {
 		top: insets.top,
@@ -46,6 +50,7 @@ export function FiltersRow() {
 			<Clock color="#1f2937" size={24} />
 
 			<Select
+				onOpenChange={setIsDayOpen}
 				value={{
 					value: dayOfWeek.toString(),
 					label: `Every ${fullDays[dayOfWeek]}`,
@@ -54,13 +59,17 @@ export function FiltersRow() {
 					if (option) dispatch(setDayOfWeek(parseInt(option.value)));
 				}}
 			>
-				<SelectTrigger className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 active:outline-none bg-transparent h-auto px-0 py-0 min-w-0">
+				<SelectTrigger 
+					className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 hover:bg-black/5 hover:scale-105 active:scale-[0.97] active:opacity-90 transition-all rounded-md bg-transparent h-auto px-2 py-1 min-w-0 gap-3 relative"
+					onPressIn={() => setIsDayPressed(true)}
+					onPressOut={() => setIsDayPressed(false)}
+				>
 					<SelectValue
-						className="text-xl text-gray-800 font-medium"
+						className={`text-lg transition-colors duration-200 font-medium ${isDayPressed || isDayOpen ? 'text-blue-600' : 'text-gray-800'}`}
 						placeholder="Select..."
 					/>
 				</SelectTrigger>
-				<SelectContent insets={contentInsets} className="w-48 native:w-56">
+				<SelectContent sideOffset={8} insets={contentInsets} className="w-48 native:w-56">
 					<SelectGroup>
 						{fullDays.map((day, i) => (
 							<SelectItem key={i} label={day} value={i.toString()}>
@@ -72,18 +81,23 @@ export function FiltersRow() {
 			</Select>
 
 			<Select
+				onOpenChange={setIsTimeOpen}
 				value={{ value: timeSlot, label: timeSlot }}
 				onValueChange={(option) => {
 					if (option) dispatch(setTimeSlot(option.value as TimeSlot));
 				}}
 			>
-				<SelectTrigger className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 active:outline-none bg-transparent h-auto px-0 py-0 min-w-0 pl-1">
+				<SelectTrigger 
+					className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 hover:bg-black/5 hover:scale-105 active:scale-[0.97] active:opacity-90 transition-all rounded-md bg-transparent h-auto px-2 py-1 min-w-0 pl-1 gap-3 relative"
+					onPressIn={() => setIsTimePressed(true)}
+					onPressOut={() => setIsTimePressed(false)}
+				>
 					<SelectValue
-						className="text-xl text-gray-800 font-medium"
+						className={`text-lg transition-colors duration-200 font-medium ${isTimePressed || isTimeOpen ? 'text-blue-600' : 'text-gray-800'}`}
 						placeholder="Select..."
 					/>
 				</SelectTrigger>
-				<SelectContent insets={contentInsets} className="w-48 native:w-56">
+				<SelectContent sideOffset={8} insets={contentInsets} className="w-48 native:w-56">
 					<SelectGroup>
 						{slots.map((slot) => (
 							<SelectItem key={slot} label={slot} value={slot}>
