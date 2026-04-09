@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useComparisonPanelContext } from "./context";
+import { FormattedDate, formatTimeWindow } from "@/components/ui/FormattedDate";
 
 interface HeaderProps {
 	title: string;
@@ -9,14 +10,17 @@ interface HeaderProps {
 
 export function Header({ title, date }: HeaderProps) {
 	const { summary } = useComparisonPanelContext();
+	const timeWindow = formatTimeWindow(summary.windowStartHour, summary.windowEndHour);
 
 	return (
 		<View className="flex-row justify-between items-start mb-6">
 			<View className="gap-1 flex-1">
 				<Text className="text-xl font-bold text-foreground">{title}</Text>
-				<Text className="text-sm text-muted-foreground">
-					{date.toDateString()}
-				</Text>
+				<FormattedDate 
+					date={date} 
+					className="text-sm text-muted-foreground"
+					appendString={`, ${timeWindow}`}
+				/>
 			</View>
 
 			<View className="items-end justify-start pl-4">
