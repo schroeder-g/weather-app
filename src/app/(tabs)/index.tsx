@@ -1,15 +1,15 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ComparisonPanel from "@/components/ComparisonPanel";
 import ForecastChart from "@/components/ForecastChart";
 import MessageBlast from "@/components/MessageBlast";
 import TopBar from "@/components/TopBar";
+import { fetchInitialLocation } from "@/features/event/eventSlice";
 import { getSlotBounds, getUpcomingDates } from "@/lib/dateUtils";
 import { analyzeWeatherWindow } from "@/lib/weatherAnalyzer";
 import { useGetForecastQuery } from "@/store/api";
-import type { RootState, AppDispatch } from "@/store/store";
-import { fetchInitialLocation } from "@/features/event/eventSlice";
+import type { AppDispatch, RootState } from "@/store/store";
 
 export default function TabOneScreen() {
 	const dispatch = useDispatch<AppDispatch>();
