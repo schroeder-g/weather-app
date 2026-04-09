@@ -1,59 +1,43 @@
-# Whether.io Setup
+# Whether.io
 
-A React Native Web / Expo prototype for an outdoor meetup organizer to compare weather for next week vs the week after.
+A universal React Native / Expo application for outdoor meetup organizers to symmetrically compare multivariant weather forecasts across selected dates.
 
-## Prerequisites
-- Node.js LTS (e.g. v22)
-- PNPM (e.g. v10)
-- EAS CLI (optional, if you plan to deploy to mobile app stores)
+## Application Stack
+- **Framework**: React Native (0.81) / Expo (v54) / Expo Router
+- **State & Data**: Redux Toolkit / RTK Query / MSW (Mocking Service Worker)
+- **Styling & UI**: NativeWind (Tailwind CSS) / `@rn-primitives` / Reanimated
+- **Visualizations**: D3.js (SVG)
+- **Quality Assurance**: Jest (Unit/Integration) / Maestro (E2E) / Biome (Linting)
 
-## Installation
+## Native-First Philosophy
+Built on true native primitives using `@rn-primitives` and `react-native-reanimated` to guarantee 60fps gesture-driven interactions, prioritizing iOS/Android UI fidelity while gracefully degrading to web via `react-native-web`. E2E tested structurally on native simulator hardware via Maestro.
 
-1. Install dependencies:
-   ```bash
-   pnpm install
-   ```
+## Key Utilities
+- **`src/lib/weatherAnalyzer.ts`**: AI/Heuristic-driven deterministic recommendation engine for weather favorability.
+- **`src/lib/dateUtils.ts`**: Pure function library for temporal offset math.
+- **`src/store/`**: RTK Query endpoints interfaced with the Visual Crossing API.
+- **`.maestro/`**: YAML-defined, structural E2E test flows mimicking visceral user interactions.
 
-2. Configure environment variables:
-   Copy `.env.example` to `.env` and fill in the values. (An example is pre-filled with the provided Visual Crossing key)
-   ```bash
-   cp .env.example .env
-   ```
+## Deployment Process
+- **Web (Vercel/Netlify)**: Executes `npx expo export --platform web` yielding a static SPA in `/dist`.
+- **Mobile (iOS/Android)**: Regulated via Expo Application Services (EAS). Build execution: `eas build --platform ios --profile preview`.
 
 ## Development Commands
-
-- **Run Web:** `pnpm start --web` (Runs the web bundler at port 8081)
-- **Run iOS (Sim):** `pnpm start --ios`
-- **Run Android (Emu):** `pnpm start --android`
-- **Run Tests:** `pnpm exec jest`
-- **Run Typecheck:** `pnpm exec tsc --noEmit`
-- **Run Linter (Biome):** `pnpm exec biome check .`
+- **Run Web**: `pnpm start --web`
+- **Run iOS**: `pnpm start --ios`
+- **Run Android**: `pnpm start --android`
+- **Unit/Integration Tests**: `pnpm exec jest`
+- **E2E Tests**: `pnpm run test:e2e`
+- **Typecheck**: `pnpm exec tsc --noEmit`
+- **Lint**: `pnpm exec biome check .`
 
 ## Project Structure
+- `app/`: Expo Router endpoints and root layouts.
+- `src/components/`: Reusable, atomic UI components (e.g., Accordions, Charts).
+- `src/features/`: Domain-specific Redux slices matching user workflows.
+- `src/lib/`: Custom pure functions and domain-logic extractors.
+- `src/store/`: Redux store configuration and RTK Query APIs.
 
-- `app/`: Expo Router pages. Core view logic resides in `app/(tabs)/index.tsx`.
-- `src/components/`: Dump UI components like TopBar, Comparison panels, and SVG D3 Charts.
-- `src/features/`: Redux slices (e.g., event form configuration like location, day, time-slot selection).
-- `src/lib/`: Custom pure functions containing Date offsets, and AI/Heuristic driven logic (like deterministic messages & recommendation calculations).
-- `src/store/`: Redux Toolkit store + RTK Query endpoints connected to Visual Crossing.
-- `src/test/`: Contains unit tests validating business domain capabilities.
-
-## Deployment Readiness
-
-### Web Deployment (EAS / Vercel / Netlify)
-You can directly export the SPA for web hosting by running:
-```bash
-npx expo export --platform web
-```
-The resulting static files will be placed in the `dist` folder, which can be uploaded to Vercel or any static file host.
-
-### Mobile App Deployment (EAS)
-The repo is primed with `eas.json` for Expo Application Services (EAS). To trigger an iOS build:
-```bash
-eas build --platform ios --profile preview
-```
-
-## Known Limitations & Compromises
-- Real-world UI requires physical screen bounding tests for edge-cases. The chart uses fixed height to guarantee rendering across engines.
-- D3 currently generates smoothed Bezier lines across arbitrary 1-hour ticks. This creates an optical illusion of intermediate minute-weather measurements, which is meant strictly for aesthetics.
-- We've mocked authentication with msw to demonstrate the UI without overengineering the prototype
+## Known Limitations
+- D3 generates smoothed Bezier splines over 1-hour ticks, manufacturing a non-existent minute-by-minute curve strictly for aesthetic fluidity.
+- Authentication paths are temporarily mocked using `msw` to prioritize core UI/UX validation over immediate backend scaffolding.
