@@ -100,6 +100,7 @@ export function LocationRow() {
 						<ScrollView keyboardShouldPersistTaps="handled">
 							{data.map((item, index) => (
 								<TouchableOpacity
+									testID="location-suggestion-item"
 									key={item.id}
 									className={`p-4 flex-row items-start ${index < data.length - 1 ? 'border-b border-border/50' : ''}`}
 									onPress={() => handleSelectSuggestion(item)}

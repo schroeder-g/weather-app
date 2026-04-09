@@ -77,10 +77,10 @@ export function Summary() {
 	}
 
 	return (
-		<Pressable onPress={copyToClipboard}>
+		<Pressable onPress={copyToClipboard} testID="copy-summary-button">
 			{({ pressed }) => (
 				<View className={`flex-row items-start gap-2 transition-opacity duration-200 ${pressed ? "opacity-70" : "opacity-100"}`}>
-					<Text className="text-foreground italic leading-relaxed font-medium text-base flex-1">
+					<Text testID="weather-analysis-text" className="text-foreground italic leading-relaxed font-medium text-base flex-1">
 						{resolvedMessage ? resolvedMessage : ""}
 					</Text>
 					{resolvedMessage ? (

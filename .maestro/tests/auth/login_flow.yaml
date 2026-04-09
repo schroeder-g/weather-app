@@ -1,0 +1,23 @@
+appId: com.anonymous.whether
+---
+- clearState
+- launchApp
+- assertVisible:
+    id: "login-button"
+- tapOn:
+    id: "login-button"
+- assertVisible:
+    id: "tab-this-week"
+- tapOn:
+    id: "settings-button" # Assuming there's a settings/profile button
+- assertVisible:
+    id: "logout-menu-item"
+- tapOn:
+    id: "logout-menu-item"
+- assertVisible:
+    id: "slide-to-confirm-button"
+- swipe:
+    direction: RIGHT
+    id: "slide-to-confirm-button"
+- assertVisible:
+    id: "login-button"

@@ -1,7 +1,0 @@
-appId: ${APP_ID:-com.anonymous.whether}
----
-- launchApp
-- assertVisible: "ComparisonPanel" 
-- swipe:
-    direction: UP
-- assertVisible: "ForecastChart"

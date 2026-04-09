@@ -31,7 +31,7 @@ export function TopBarHeader() {
 					Whether.io
 				</Text>
 				<DropdownMenu>
-					<DropdownMenuTrigger>
+					<DropdownMenuTrigger testID="settings-button">
 						<Menu className="text-foreground" size={32} />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
@@ -41,7 +41,7 @@ export function TopBarHeader() {
 						<DropdownMenuItem onPress={() => setIsHelpOpen(true)}>
 							<Text className="text-foreground">Help</Text>
 						</DropdownMenuItem>
-						<DropdownMenuItem variant="destructive" onPress={() => setIsLogoutOpen(true)}>
+						<DropdownMenuItem testID="logout-menu-item" variant="destructive" onPress={() => setIsLogoutOpen(true)}>
 							<Text className="text-destructive">Log out</Text>
 						</DropdownMenuItem>
 					</DropdownMenuContent>

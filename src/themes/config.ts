@@ -9,6 +9,7 @@ export const staticColors = {
 export const chromaticColors = {
 	zinc: colors.zinc[500],
 	red: colors.rose[500],
+	pink: colors.pink[500],
 	orange: colors.orange[500],
 	yellow: colors.yellow[500],
 	green: colors.green[500],
@@ -21,6 +22,7 @@ export const chromaticColors = {
 export const palette = {
 	zinc: colors.zinc,
 	red: colors.rose,
+	pink: colors.pink,
 	orange: colors.orange,
 	yellow: colors.yellow,
 	green: colors.green,

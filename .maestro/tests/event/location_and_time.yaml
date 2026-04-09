@@ -1,0 +1,23 @@
+appId: com.anonymous.whether
+---
+- launchApp
+- assertVisible:
+    id: "location-input"
+- tapOn:
+    id: "location-input"
+- inputText: "New Yo"
+- assertVisible:
+    id: "location-suggestion-item"
+- tapOn:
+    id: "location-suggestion-item"
+    index: 0
+- assertVisible:
+    id: "time-selector"
+- tapOn:
+    id: "time-selector"
+- assertVisible:
+    id: "time-slot-pick"
+- tapOn:
+    id: "time-slot-pick"
+    index: 1
+- assertVisible: "ComparisonPanel"

@@ -92,6 +92,7 @@ export function SlideToConfirm({
       </Animated.Text>
       <GestureDetector gesture={panGesture}>
         <Animated.View
+          testID="slide-to-confirm-button"
           style={[
             styles.button,
             {

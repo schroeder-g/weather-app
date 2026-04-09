@@ -51,7 +51,7 @@ const ChartScrubberTooltip = memo(() => {
 	const textX = clampedRectX + estimatedWidth / 2;
 
 	return (
-		<G>
+		<G testID="chart-scrubber-tooltip">
 			<Line
 				x1={x}
 				x2={x}

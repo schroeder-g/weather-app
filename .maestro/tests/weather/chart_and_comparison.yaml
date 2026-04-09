@@ -1,0 +1,25 @@
+appId: com.anonymous.whether
+---
+- launchApp
+- assertVisible:
+    id: "tab-this-week"
+- assertVisible:
+    id: "tab-next-week"
+- tapOn:
+    id: "tab-next-week"
+- assertVisible: "ComparisonPanel"
+- assertVisible:
+    id: "open-config-btn"
+- tapOn:
+    id: "open-config-btn"
+- tapOn:
+    id: "toggle-precip"
+- swipe: # Simulate scrubber via swipe
+    direction: LEFT
+    id: "chart-touch-surface"
+- assertVisible:
+    id: "chart-scrubber-tooltip"
+- assertVisible:
+    id: "weather-analysis-text"
+- tapOn:
+    id: "copy-summary-button"

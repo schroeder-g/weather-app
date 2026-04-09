@@ -111,10 +111,10 @@ function WeatherLayout() {
                   }
                 >
                   <TabsList className="flex-row">
-                    <TabsTrigger value="this">
+                    <TabsTrigger value="this" testID="tab-this-week">
                       <UIText>This week</UIText>
                     </TabsTrigger>
-                    <TabsTrigger value="next">
+                    <TabsTrigger value="next" testID="tab-next-week">
                       <UIText>Next week</UIText>
                     </TabsTrigger>
                   </TabsList>

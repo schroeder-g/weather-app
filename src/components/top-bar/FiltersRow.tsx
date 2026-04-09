@@ -92,6 +92,7 @@ export function FiltersRow() {
 				}}
 			>
 				<SelectTrigger
+					testID="time-selector"
 					className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 hover:bg-black/5 hover:scale-105 active:scale-[0.97] active:opacity-90 transition-all rounded-md bg-transparent h-auto px-2 py-1 min-w-0 pl-1 gap-3 relative"
 					onPressIn={() => setIsTimePressed(true)}
 					onPressOut={() => setIsTimePressed(false)}
@@ -108,7 +109,7 @@ export function FiltersRow() {
 				>
 					<SelectGroup>
 						{slots.map((slot) => (
-							<SelectItem key={slot} label={slot} value={slot}>
+							<SelectItem testID="time-slot-pick" key={slot} label={slot} value={slot}>
 								<Text>{slot}</Text>
 							</SelectItem>
 						))}
