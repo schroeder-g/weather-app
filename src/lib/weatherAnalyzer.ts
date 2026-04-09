@@ -40,7 +40,7 @@ export interface WeatherSummary extends WindowMetrics {
   recommendation: RecommendationSignal;
   primaryIcon?: string;
   primaryConditions?: string;
-  message: string;
+  message: AsyncGenerator<string, void, unknown>;
   points: ProcessedPoint[];
   allPoints: ProcessedPoint[];
   windowStartHour: number;
@@ -142,7 +142,7 @@ export async function analyzeWeatherWindow(
   };
 
   const recommendation = getRecommendation(metrics, isLongRange);
-  const message = await generateMessage(metrics, isLongRange);
+  const message = generateMessage(metrics, isLongRange);
 
   const allPoints = day.hours.map((h) => ({
     time: h.datetime.substring(0, 5),
@@ -211,10 +211,10 @@ const messageSignature = ax(`
 	message:string "A concise, friendly, and adroit 1-2 sentence message summarizing the conditions."
 `);
 
-export async function generateMessage(
+export async function* generateMessage(
   metrics: WindowMetrics,
   isLongRange = false,
-): Promise<string> {
+): AsyncGenerator<string, void, unknown> {
   const { precip, minTemp, maxTemp, wind, severe, uv } = {
     precip: metrics.avgPrecipProb,
     minTemp: metrics.minTemp,
@@ -230,19 +230,32 @@ export async function generateMessage(
   if (localApiKey) {
     try {
       const llm = ai({ name: "openai", apiKey: localApiKey });
-      const result = await messageSignature.forward(llm, {
-        minTemp,
-        maxTemp,
-        precipProb: precip,
-        maxWind: wind,
-        maxUv: uv,
-        severeRisk: severe,
-        recommendation: getRecommendation(metrics, isLongRange),
-        isLongRange,
-      }, { stream: false } as any);
+      const result = await messageSignature.forward(
+        llm,
+        {
+          minTemp,
+          maxTemp,
+          precipProb: precip,
+          maxWind: wind,
+          maxUv: uv,
+          severeRisk: severe,
+          recommendation: getRecommendation(metrics, isLongRange),
+          isLongRange,
+        },
+        { stream: false } as any
+      );
+
       if (result && result.message) {
-        return result.message;
+        // Synthetic streaming: since React Native cannot natively parse raw TCP streams over its JS-XHR bridge automatically,
+        // we execute the completion quickly in block, and then yield the result iteratively so the UI 
+        // cleanly mounts the Typewriter effect via the AsyncGenerator pattern!
+        const words = result.message.match(/(\S+\s*)/g) || [result.message];
+        for (const word of words) {
+          await new Promise((r) => setTimeout(r, 45)); // ~22 words a second
+          yield word;
+        }
       }
+      return;
     } catch (e) {
       console.warn(
         "LLM message generation failed, falling back to deterministic output:",
@@ -252,48 +265,55 @@ export async function generateMessage(
   }
 
   if (severe >= severeThreshold) {
-    return isLongRange
+    yield isLongRange
       ? "There's an early indication of severe weather risk. Seriously consider postponing."
       : `Severe weather risk is elevated (${severe}/100) due to potential for thunderstorms, hail, or high winds. Seriously consider postponing.`;
+    return;
   }
 
   if (precip > 50) {
-    return isLongRange
+    yield isLongRange
       ? `Models indicate a chance of rain (${Math.round(precip)}%). Might want to consider an indoor alternative.`
       : `Chance of rain (${Math.round(precip)}%). Might want to consider an indoor alternative.`;
+    return;
   }
 
   if (uv >= 10 && maxTemp > 80) {
-    return isLongRange
+    yield isLongRange
       ? "Early models show extreme UV risk. Bring sunscreen and stay hydrated!"
       : "Extreme UV risk. Bring sunscreen and stay hydrated!";
+    return;
   }
 
   if (minTemp >= 60 && maxTemp <= 80 && precip < 10) {
-    return isLongRange
+    yield isLongRange
       ? "Models are hinting at gorgeous conditions."
       : "Absolutely gorgeous conditions expected.";
+    return;
   }
 
   if (maxTemp > 90) {
-    return isLongRange
+    yield isLongRange
       ? "It looks like it will be toasty. Bring plenty of water and seek shade!"
       : "It will be toasty. Bring plenty of water and seek shade!";
+    return;
   }
 
   if (minTemp < 40) {
-    return isLongRange
+    yield isLongRange
       ? "It's looking chilly, bundle up!"
       : "Bundle up, it will be chilly!";
+    return;
   }
 
   if (wind > 15) {
-    return isLongRange
+    yield isLongRange
       ? "Conditions seem okay, but it might be quite windy."
       : "Conditions are okay, but it will be quite windy.";
+    return;
   }
 
-  return isLongRange
+  yield isLongRange
     ? "Preliminary forecast shows standard conditions."
     : "Expect standard conditions. Should be a pleasant meetup.";
 }

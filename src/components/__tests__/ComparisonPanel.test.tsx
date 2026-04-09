@@ -70,4 +70,28 @@ describe("ComparisonPanel", () => {
 		expect(screen.getByText("Warning (Postpone)")).toBeTruthy();
 		expect(screen.getByText('"Severe storms incoming"')).toBeTruthy();
 	});
+
+	it("renders a skeleton loader while message is resolving", async () => {
+		let resolveMessage!: (msg: string) => void;
+		const messagePromise = new Promise<string>((resolve) => {
+			resolveMessage = resolve;
+		});
+
+		const loadingSummary = {
+			...mockSummary,
+			message: messagePromise,
+		};
+
+		render(<TestWrapper summary={loadingSummary} />);
+
+		// Test for skeleton indicator
+		expect(screen.getByTestId("summary-skeleton")).toBeTruthy();
+
+		// Resolve the promise
+		resolveMessage("Loaded message");
+
+		// Wait for message to appear
+		const msg = await screen.findByText('"Loaded message"');
+		expect(msg).toBeTruthy();
+	});
 });

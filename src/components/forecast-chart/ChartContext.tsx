@@ -33,23 +33,29 @@ export function useChartContext() {
 	return context;
 }
 
-interface ChartProviderProps extends Omit<ChartContextValue, 'scrubberIndex' | 'setScrubberIndex'> {
+interface ChartProviderProps
+	extends Omit<ChartContextValue, "scrubberIndex" | "setScrubberIndex"> {
 	children: React.ReactNode;
 }
 
 export const ChartProvider = React.memo(
 	({ children, ...value }: ChartProviderProps) => {
-        const [scrubberIndex, setScrubberIndex] = useState<number | null>(null);
-        
-        // Bundle the scrubber stat along with primitive config
-        const contextValue = React.useMemo(() => ({
-            ...value,
-            scrubberIndex,
-            setScrubberIndex
-        }), [value, scrubberIndex, setScrubberIndex]);
+		const [scrubberIndex, setScrubberIndex] = useState<number | null>(null);
+
+		// Bundle the scrubber stat along with primitive config
+		const contextValue = React.useMemo(
+			() => ({
+				...value,
+				scrubberIndex,
+				setScrubberIndex,
+			}),
+			[value, scrubberIndex, setScrubberIndex],
+		);
 
 		return (
-			<ChartContext.Provider value={contextValue}>{children}</ChartContext.Provider>
+			<ChartContext.Provider value={contextValue}>
+				{children}
+			</ChartContext.Provider>
 		);
 	},
 );
