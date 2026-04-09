@@ -1,16 +1,20 @@
 import React from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
-import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
+import Animated, {
+	FadeIn,
+	FadeOut,
+	LinearTransition,
+} from "react-native-reanimated";
 
 import ComparisonPanel from "@/components/comparison-panel";
 import ForecastChart from "@/components/ForecastChart";
-import TopBar from "@/components/TopBar";
 import ChartLegendPopover from "@/components/forecast-chart/ChartLegendPopover";
+import TopBar from "@/components/TopBar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text as UIText } from "@/components/ui/text";
 import {
-	WeatherComparisonProvider,
 	useWeatherComparisonContext,
+	WeatherComparisonProvider,
 } from "@/features/weather/WeatherComparisonProvider";
 
 function WeatherLayout() {
@@ -48,7 +52,7 @@ function WeatherLayout() {
 						</Text>
 					</View>
 				)}
-				
+
 				{/** Error State **/}
 				{error && !isFetching && (
 					<View className="bg-destructive/10 p-4 rounded-lg my-4 border border-destructive/20 items-center">
@@ -60,7 +64,7 @@ function WeatherLayout() {
 						</Text>
 					</View>
 				)}
-				
+
 				{/** Empty State **/}
 				{!isFetching && !error && (!thisWeekResult || !nextWeekResult) && (
 					<View className="p-8 items-center justify-center border-dashed border-2 border-border rounded-xl my-8">
@@ -69,65 +73,77 @@ function WeatherLayout() {
 						</Text>
 					</View>
 				)}
-				
+
 				{/** Results View **/}
-				{isReady && thisWeekResult && nextWeekResult && thisWeekDate && nextWeekDate && (
-					<Animated.View
-						entering={FadeIn.duration(400)}
-						exiting={FadeOut}
-						layout={LinearTransition.springify()}
-					>
+				{isReady &&
+					thisWeekResult &&
+					nextWeekResult &&
+					thisWeekDate &&
+					nextWeekDate && (
 						<Animated.View
+							entering={FadeIn.duration(400)}
+							exiting={FadeOut}
 							layout={LinearTransition.springify()}
-							className="my-1"
 						>
-							<ComparisonPanel.Root
-								summary={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
+							<Animated.View
+								layout={LinearTransition.springify()}
+								className="my-1"
 							>
-								<ComparisonPanel.Header 
-									title={selectedWeek === "this" ? "This Week" : "Next Week"} 
-									date={selectedWeek === "this" ? thisWeekDate : nextWeekDate} 
-								/>
-								<ComparisonPanel.Metrics />
-								<ComparisonPanel.Recommendation />
-								<ComparisonPanel.Summary />
-							</ComparisonPanel.Root>
+								<ComparisonPanel.Root
+									summary={
+										selectedWeek === "this" ? thisWeekResult : nextWeekResult
+									}
+								>
+									<ComparisonPanel.Header
+										title={selectedWeek === "this" ? "This Week" : "Next Week"}
+										date={selectedWeek === "this" ? thisWeekDate : nextWeekDate}
+									/>
+									<ComparisonPanel.Metrics />
+									<ComparisonPanel.Recommendation />
+									<ComparisonPanel.Summary />
+								</ComparisonPanel.Root>
+							</Animated.View>
+
+							<View className="my-1 z-10 flex-row justify-start items-start">
+								<Tabs
+									value={selectedWeek}
+									onValueChange={(val) =>
+										actions.setSelectedWeek(val as "this" | "next")
+									}
+								>
+									<TabsList className="flex-row">
+										<TabsTrigger value="this">
+											<UIText>This week</UIText>
+										</TabsTrigger>
+										<TabsTrigger value="next">
+											<UIText>Next week</UIText>
+										</TabsTrigger>
+									</TabsList>
+								</Tabs>
+							</View>
+
+							<ForecastChart
+								data={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
+							/>
+
+							<View className="flex-row items-center justify-center gap-2 mt-4 mb-8 z-50">
+								<Text className="text-2xl font-bold text-foreground">
+									{selectedWeek === "this"
+										? thisWeekDate.toLocaleDateString("en-US", {
+												weekday: "long",
+												month: "long",
+												day: "numeric",
+											})
+										: nextWeekDate.toLocaleDateString("en-US", {
+												weekday: "long",
+												month: "long",
+												day: "numeric",
+											})}
+								</Text>
+								<ChartLegendPopover />
+							</View>
 						</Animated.View>
-
-						<View className="my-1 z-10 flex-row justify-start items-start">
-							<Tabs 
-								value={selectedWeek} 
-								onValueChange={(val) => actions.setSelectedWeek(val as "this" | "next")}
-							>
-								<TabsList className="flex-row">
-									<TabsTrigger value="this"><UIText>This week</UIText></TabsTrigger>
-									<TabsTrigger value="next"><UIText>Next week</UIText></TabsTrigger>
-								</TabsList>
-							</Tabs>
-						</View>
-
-						<ForecastChart
-							data={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
-						/>
-
-						<View className="flex-row items-center justify-center gap-2 mt-4 mb-8 z-50">
-							<Text className="text-2xl font-bold text-foreground">
-								{selectedWeek === "this"
-									? thisWeekDate.toLocaleDateString("en-US", {
-											weekday: "long",
-											month: "long",
-											day: "numeric",
-									  })
-									: nextWeekDate.toLocaleDateString("en-US", {
-											weekday: "long",
-											month: "long",
-											day: "numeric",
-									  })}
-							</Text>
-							<ChartLegendPopover />
-						</View>
-					</Animated.View>
-				)}
+					)}
 			</ScrollView>
 		</View>
 	);

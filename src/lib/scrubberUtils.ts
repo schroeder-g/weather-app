@@ -22,7 +22,7 @@ export function calculateScrubberData(
 
 	// 1. Clamp bounds
 	const maxIndex = points.length - 1;
-	let clamped = Math.max(0, Math.min(continuousIndex, maxIndex));
+	const clamped = Math.max(0, Math.min(continuousIndex, maxIndex));
 
 	// 2. Snap to 5-minute ticks (12 ticks per hour/index unit)
 	const ticksPerUnit = 12;
@@ -60,7 +60,7 @@ export function calculateScrubberData(
 }
 
 function formatTimeWithOffset(baseTimeStr: string, addMinutes: number): string {
-    // baseTimeStr is "06:00" format
+	// baseTimeStr is "06:00" format
 	const [hours, minutes] = baseTimeStr.split(":").map(Number);
 	let newMinutes = minutes + addMinutes;
 	let newHours = hours;

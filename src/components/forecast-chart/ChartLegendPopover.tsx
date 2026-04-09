@@ -16,11 +16,11 @@ export function ChartLegendPopover() {
 				animationType="fade"
 				onRequestClose={() => setOpen(false)}
 			>
-				<Pressable 
+				<Pressable
 					className="flex-1 justify-center items-center bg-black/40"
 					onPress={() => setOpen(false)}
 				>
-					<Pressable 
+					<Pressable
 						className="bg-card w-11/12 max-w-sm p-6 rounded-2xl shadow-xl border border-border relative"
 						onPress={(e) => e.stopPropagation()}
 					>
@@ -29,16 +29,26 @@ export function ChartLegendPopover() {
 						</Text>
 						<View className="flex-col gap-3 w-full px-2">
 							<View className="flex-row items-center gap-3">
-								<View className="w-4 h-4 rounded-full" style={{ backgroundColor: baseColors.orange }} />
-								<Text className="text-muted-foreground text-sm">Temperature (°F)</Text>
+								<View
+									className="w-4 h-4 rounded-full"
+									style={{ backgroundColor: baseColors.orange }}
+								/>
+								<Text className="text-muted-foreground text-sm">
+									Temperature (°F)
+								</Text>
 							</View>
 							<View className="flex-row items-center gap-3">
-								<View className="w-4 h-4 rounded-full" style={{ backgroundColor: baseColors.blue }} />
-								<Text className="text-muted-foreground text-sm">Precipitation (%)</Text>
+								<View
+									className="w-4 h-4 rounded-full"
+									style={{ backgroundColor: baseColors.blue }}
+								/>
+								<Text className="text-muted-foreground text-sm">
+									Precipitation (%)
+								</Text>
 							</View>
 						</View>
-						<Pressable 
-							className="absolute top-2 right-2 p-2" 
+						<Pressable
+							className="absolute top-2 right-2 p-2"
 							onPress={() => setOpen(false)}
 						>
 							<Text className="text-muted-foreground font-bold">✕</Text>

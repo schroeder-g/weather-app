@@ -1,4 +1,9 @@
-import { AlertTriangle, CloudRain, ThermometerSun, Wind } from "lucide-react-native";
+import {
+	AlertTriangle,
+	CloudRain,
+	ThermometerSun,
+	Wind,
+} from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 import { baseColors } from "@/themes/config";

@@ -1,72 +1,67 @@
-import { palette } from "@/themes/config";
 import React, { memo } from "react";
 import { G, Line, Text as SvgText } from "react-native-svg";
+import { palette } from "@/themes/config";
 import { useChartContext } from "./ChartContext";
 import { useChartBounds } from "./useChartBounds";
 
 const ChartXAxis = memo(() => {
-  const { 
-    displayPoints, 
-    windowStartHour, 
-    windowEndHour, 
-    xScale, 
-    innerHeight 
-  } = useChartContext();
+	const { displayPoints, windowStartHour, windowEndHour, xScale, innerHeight } =
+		useChartContext();
 
-  const { startX, endX, hasStartIndex, hasEndIndex } = useChartBounds();
+	const { startX, endX, hasStartIndex, hasEndIndex } = useChartBounds();
 
-  if (windowStartHour === undefined || windowEndHour === undefined) return null;
+	if (windowStartHour === undefined || windowEndHour === undefined) return null;
 
-  return (
-    <G>
-      {/* Highlight window boundaries */}
-      {hasStartIndex && (
-        <Line
-          x1={startX}
-          x2={startX}
-          y1={0}
-          y2={innerHeight}
-          stroke={palette.zinc[300]}
-          strokeWidth={1.5}
-          strokeDasharray="6,6"
-        />
-      )}
-      {hasEndIndex && (
-        <Line
-          x1={endX}
-          x2={endX}
-          y1={0}
-          y2={innerHeight}
-          stroke={palette.zinc[300]}
-          strokeWidth={1.5}
-          strokeDasharray="6,6"
-        />
-      )}
+	return (
+		<G>
+			{/* Highlight window boundaries */}
+			{hasStartIndex && (
+				<Line
+					x1={startX}
+					x2={startX}
+					y1={0}
+					y2={innerHeight}
+					stroke={palette.zinc[300]}
+					strokeWidth={1.5}
+					strokeDasharray="6,6"
+				/>
+			)}
+			{hasEndIndex && (
+				<Line
+					x1={endX}
+					x2={endX}
+					y1={0}
+					y2={innerHeight}
+					stroke={palette.zinc[300]}
+					strokeWidth={1.5}
+					strokeDasharray="6,6"
+				/>
+			)}
 
-      {/* Time labels */}
-      {displayPoints.map((p, i) => {
-        const hour = parseInt(p.time.split(":")[0], 10);
-        const isSelected = hour >= windowStartHour && hour <= windowEndHour;
+			{/* Time labels */}
+			{displayPoints.map((p, i) => {
+				const hour = parseInt(p.time.split(":")[0], 10);
+				const isSelected = hour >= windowStartHour && hour <= windowEndHour;
 
-        // Only show even hours to prevent crowding
-        if (hour % 2 !== 0) return null;
+				// Only show even hours to prevent crowding
+				if (hour % 2 !== 0) return null;
 
-        return (
-          <SvgText
-            key={`time-${i}`}
-            x={xScale(i)}
-            y={innerHeight + 20}
-            fontSize="10"
-            fill={isSelected ? palette.zinc[700] : palette.zinc[400]}
-            fontWeight={isSelected ? "bold" : "normal"}
-            textAnchor="middle"
-          >
-            {hour > 12 ? `${hour - 12}p` : hour === 12 ? "12p" : `${hour}a`}
-          </SvgText>
-        );
-      })}
-    </G>
-  );
+				return (
+					<SvgText
+						key={`time-${i}`}
+						x={xScale(i)}
+						y={innerHeight + 20}
+						fontSize="10"
+						fill={isSelected ? palette.zinc[700] : palette.zinc[400]}
+						fontWeight={isSelected ? "bold" : "normal"}
+						textAnchor="middle"
+					>
+						{hour > 12 ? `${hour - 12}p` : hour === 12 ? "12p" : `${hour}a`}
+					</SvgText>
+				);
+			})}
+		</G>
+	);
 });
 
 ChartXAxis.displayName = "ChartXAxis";

@@ -59,17 +59,21 @@ export function FiltersRow() {
 					if (option) dispatch(setDayOfWeek(parseInt(option.value)));
 				}}
 			>
-				<SelectTrigger 
+				<SelectTrigger
 					className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 hover:bg-black/5 hover:scale-105 active:scale-[0.97] active:opacity-90 transition-all rounded-md bg-transparent h-auto px-2 py-1 min-w-0 gap-3 relative"
 					onPressIn={() => setIsDayPressed(true)}
 					onPressOut={() => setIsDayPressed(false)}
 				>
 					<SelectValue
-						className={`text-lg transition-colors duration-200 font-medium ${isDayPressed || isDayOpen ? 'text-primary' : 'text-foreground'}`}
+						className={`text-lg transition-colors duration-200 font-medium ${isDayPressed || isDayOpen ? "text-primary" : "text-foreground"}`}
 						placeholder="Select..."
 					/>
 				</SelectTrigger>
-				<SelectContent sideOffset={8} insets={contentInsets} className="w-48 native:w-56">
+				<SelectContent
+					sideOffset={8}
+					insets={contentInsets}
+					className="w-48 native:w-56"
+				>
 					<SelectGroup>
 						{fullDays.map((day, i) => (
 							<SelectItem key={i} label={day} value={i.toString()}>
@@ -87,17 +91,21 @@ export function FiltersRow() {
 					if (option) dispatch(setTimeSlot(option.value as TimeSlot));
 				}}
 			>
-				<SelectTrigger 
+				<SelectTrigger
 					className="border-0 border-transparent shadow-none outline-none focus:outline-none focus:ring-0 hover:bg-black/5 hover:scale-105 active:scale-[0.97] active:opacity-90 transition-all rounded-md bg-transparent h-auto px-2 py-1 min-w-0 pl-1 gap-3 relative"
 					onPressIn={() => setIsTimePressed(true)}
 					onPressOut={() => setIsTimePressed(false)}
 				>
 					<SelectValue
-						className={`text-lg transition-colors duration-200 font-medium ${isTimePressed || isTimeOpen ? 'text-primary' : 'text-foreground'}`}
+						className={`text-lg transition-colors duration-200 font-medium ${isTimePressed || isTimeOpen ? "text-primary" : "text-foreground"}`}
 						placeholder="Select..."
 					/>
 				</SelectTrigger>
-				<SelectContent sideOffset={8} insets={contentInsets} className="w-48 native:w-56">
+				<SelectContent
+					sideOffset={8}
+					insets={contentInsets}
+					className="w-48 native:w-56"
+				>
 					<SelectGroup>
 						{slots.map((slot) => (
 							<SelectItem key={slot} label={slot} value={slot}>

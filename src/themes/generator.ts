@@ -1,14 +1,14 @@
-import chroma from 'chroma-js';
+import chroma from "chroma-js";
 
 export function generateColorScale(hexOrHsl: string) {
 	const base = chroma(hexOrHsl);
-	const light = base.set('hsl.l', 0.98); // Closest to white
-	const dark = base.set('hsl.l', 0.05); // Closest to black
+	const light = base.set("hsl.l", 0.98); // Closest to white
+	const dark = base.set("hsl.l", 0.05); // Closest to black
 
 	const scale = chroma
 		.scale([light, base, dark])
 		.domain([0, 0.5, 1])
-		.mode('lch');
+		.mode("lch");
 
 	const entries: Record<number, string> = {};
 	const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];

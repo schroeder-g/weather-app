@@ -1,11 +1,11 @@
-import plugin from 'tailwindcss/plugin';
+import plugin from "tailwindcss/plugin";
 import {
 	chromaticColors,
 	commonVars,
 	palette,
 	staticColors,
 	themes,
-} from './config';
+} from "./config";
 
 const themesPlugin = plugin(
 	({ addBase }) => {
@@ -37,7 +37,7 @@ const themesPlugin = plugin(
 		addThemeVars(themes.light, rootVars);
 
 		addBase({
-			':root': rootVars,
+			":root": rootVars,
 		});
 	},
 	{
@@ -45,71 +45,71 @@ const themesPlugin = plugin(
 			extend: {
 				colors: {
 					primary: {
-						DEFAULT: 'var(--primary)',
-						foreground: 'var(--primary-foreground)',
+						DEFAULT: "var(--primary)",
+						foreground: "var(--primary-foreground)",
 					},
 					secondary: {
-						DEFAULT: 'var(--secondary)',
-						foreground: 'var(--secondary-foreground)',
+						DEFAULT: "var(--secondary)",
+						foreground: "var(--secondary-foreground)",
 					},
-					foreground: 'var(--foreground)',
-					background: 'var(--background)',
+					foreground: "var(--foreground)",
+					background: "var(--background)",
 					destructive: {
-						DEFAULT: 'var(--destructive)',
-						foreground: 'var(--destructive-foreground)',
+						DEFAULT: "var(--destructive)",
+						foreground: "var(--destructive-foreground)",
 					},
 					success: {
-						DEFAULT: 'var(--success)',
-						foreground: 'var(--success-foreground)',
+						DEFAULT: "var(--success)",
+						foreground: "var(--success-foreground)",
 					},
 					warning: {
-						DEFAULT: 'var(--warning)',
-						foreground: 'var(--warning-foreground)',
+						DEFAULT: "var(--warning)",
+						foreground: "var(--warning-foreground)",
 					},
 					info: {
-						DEFAULT: 'var(--info)',
-						foreground: 'var(--info-foreground)',
+						DEFAULT: "var(--info)",
+						foreground: "var(--info-foreground)",
 					},
 					muted: {
-						DEFAULT: 'var(--muted)',
-						foreground: 'var(--muted-foreground)',
+						DEFAULT: "var(--muted)",
+						foreground: "var(--muted-foreground)",
 					},
 					accent: {
-						DEFAULT: 'var(--accent)',
-						foreground: 'var(--accent-foreground)',
+						DEFAULT: "var(--accent)",
+						foreground: "var(--accent-foreground)",
 					},
 					popover: {
-						DEFAULT: 'var(--popover)',
-						foreground: 'var(--popover-foreground)',
+						DEFAULT: "var(--popover)",
+						foreground: "var(--popover-foreground)",
 					},
 					card: {
-						DEFAULT: 'var(--card)',
-						foreground: 'var(--card-foreground)',
+						DEFAULT: "var(--card)",
+						foreground: "var(--card-foreground)",
 					},
-					border: 'var(--border)',
-					input: 'var(--input)',
-					ring: 'var(--ring)',
+					border: "var(--border)",
+					input: "var(--input)",
+					ring: "var(--ring)",
 					...(() => {
 						const colors: Record<string, any> = {};
-						Object.keys(staticColors).forEach(name => {
+						Object.keys(staticColors).forEach((name) => {
 							colors[name] = `var(--${name})`;
 						});
-						Object.keys(chromaticColors).forEach(name => {
+						Object.keys(chromaticColors).forEach((name) => {
 							colors[name] = {
 								DEFAULT: `var(--${name})`,
 							};
-							[
-								50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-							].forEach(shade => {
-								colors[name][shade] = `var(--${name}-${shade})`;
-							});
+							[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].forEach(
+								(shade) => {
+									colors[name][shade] = `var(--${name}-${shade})`;
+								},
+							);
 						});
 						return colors;
 					})(),
 				},
 			},
 		},
-	}
+	},
 );
 
 module.exports = themesPlugin;

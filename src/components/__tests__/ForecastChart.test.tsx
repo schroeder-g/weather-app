@@ -21,7 +21,7 @@ const mockSummary = {
 	isLongRange: false,
 	maxUvIndex: 5,
 	maxSevereRisk: 0,
-	avgCloudCover: 20
+	avgCloudCover: 20,
 };
 
 // Mock the react-native hook for window dimension consistency
@@ -29,7 +29,7 @@ jest.mock("react-native", () => {
 	const RN = jest.requireActual("react-native");
 	return Object.setPrototypeOf(
 		{ useWindowDimensions: () => ({ width: 400, height: 800 }) },
-		RN
+		RN,
 	);
 });
 
@@ -44,28 +44,33 @@ describe("ForecastChart Interaction", () => {
 		fireEvent(container, "layout", {
 			nativeEvent: { layout: { width: 400, height: 400 } },
 		});
-        
-		// Rerendering with data doesn't happen automatically in simple text setups unless state updates, but 
+
+		// Rerendering with data doesn't happen automatically in simple text setups unless state updates, but
 		// onLayout causes a re-render. Since we use `width > 0` condition, it will render SVG now.
 		const touchSurface = getByTestId("chart-touch-surface");
 
-        // Click at X: 100
+		// Click at X: 100
 		fireEvent(touchSurface, "responderGrant", {
 			nativeEvent: { locationX: 100 },
 		});
 
-        // The scrub point should map to something ~6-9 AM range since the width is roughly 340 (400 - margin).
-        // Let's verify we don't crash and the tooltip renders by checking if ANY time format exists
-        // E.g. we scrubbed, we should see a textual time like "08:XX" or similar rendered.
-        expect(queryByText(/.*(:00|:05|:30).*/)).toBeTruthy(); 
+		// The scrub point should map to something ~6-9 AM range since the width is roughly 340 (400 - margin).
+		// Let's verify we don't crash and the tooltip renders by checking if ANY time format exists
+		// E.g. we scrubbed, we should see a textual time like "08:XX" or similar rendered.
+		expect(queryByText(/.*(:00|:05|:30).*/)).toBeTruthy();
 
-        // Now move right by 50px using gestureState
-		fireEvent(touchSurface, "responderMove", {
-			nativeEvent: { locationX: 100 }, // React native events jump around natively!
-            // But we intercept gestureState dx
-		}, { dx: 50, dy: 0 }); // Second arg in PanResponder is gestureState
+		// Now move right by 50px using gestureState
+		fireEvent(
+			touchSurface,
+			"responderMove",
+			{
+				nativeEvent: { locationX: 100 }, // React native events jump around natively!
+				// But we intercept gestureState dx
+			},
+			{ dx: 50, dy: 0 },
+		); // Second arg in PanResponder is gestureState
 
-        // Assert it handled the scrub (tooltip time should jump forward)
-        // This is a behavioral integration test confirming the PanHandlers consume `dx`.
+		// Assert it handled the scrub (tooltip time should jump forward)
+		// This is a behavioral integration test confirming the PanHandlers consume `dx`.
 	});
 });
