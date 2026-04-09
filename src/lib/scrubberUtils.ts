@@ -22,7 +22,15 @@ export function calculateScrubberData(
 	continuousIndex: number,
 ): ScrubberResult {
 	if (points.length === 0) {
-		return { time: "00:00", temp: 0, precip: 0, wind: 0, uv: 0, aqi: 0, index: 0 };
+		return {
+			time: "00:00",
+			temp: 0,
+			precip: 0,
+			wind: 0,
+			uv: 0,
+			aqi: 0,
+			index: 0,
+		};
 	}
 
 	// 1. Clamp bounds

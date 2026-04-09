@@ -26,7 +26,9 @@ interface ChartScrubberContextValue {
 }
 
 const ChartContext = createContext<ChartContextValue | null>(null);
-const ChartScrubberContext = createContext<ChartScrubberContextValue | null>(null);
+const ChartScrubberContext = createContext<ChartScrubberContextValue | null>(
+	null,
+);
 
 export function useChartContext() {
 	const context = useContext(ChartContext);
@@ -39,7 +41,9 @@ export function useChartContext() {
 export function useChartScrubberContext() {
 	const context = useContext(ChartScrubberContext);
 	if (!context) {
-		throw new Error("useChartScrubberContext must be used within a ChartProvider");
+		throw new Error(
+			"useChartScrubberContext must be used within a ChartProvider",
+		);
 	}
 	return context;
 }
@@ -61,16 +65,19 @@ export const ChartProvider = React.memo(
 		);
 
 		// Memoizing the spread object is critical to prevent Context churn
-		const staticValue = React.useMemo(() => valueProps, [
-			valueProps.innerWidth,
-			valueProps.innerHeight,
-			valueProps.margin,
-			valueProps.displayPoints,
-			valueProps.windowStartHour,
-			valueProps.windowEndHour,
-			valueProps.xScale,
-			valueProps.yScale,
-		]);
+		const staticValue = React.useMemo(
+			() => valueProps,
+			[
+				valueProps.innerWidth,
+				valueProps.innerHeight,
+				valueProps.margin,
+				valueProps.displayPoints,
+				valueProps.windowStartHour,
+				valueProps.windowEndHour,
+				valueProps.xScale,
+				valueProps.yScale,
+			],
+		);
 
 		return (
 			<ChartContext.Provider value={staticValue}>

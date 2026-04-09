@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextProps } from "react-native";
+import { Text, type TextProps } from "react-native";
 
 export function getOrdinalSuffix(day: number): string {
 	if (day > 3 && day < 21) return "th";
@@ -27,7 +27,8 @@ export function formatTimeWindow(startHour: number, endHour: number): string {
 	const endAmPm = endHour >= 12 ? "pm" : "am";
 
 	if (startAmPm === endAmPm) {
-		const start = startHour === 0 ? 12 : startHour > 12 ? startHour - 12 : startHour;
+		const start =
+			startHour === 0 ? 12 : startHour > 12 ? startHour - 12 : startHour;
 		const end = endHour === 0 ? 12 : endHour > 12 ? endHour - 12 : endHour;
 		return `${start}-${end} ${endAmPm}`;
 	}

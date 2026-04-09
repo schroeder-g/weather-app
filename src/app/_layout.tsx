@@ -1,4 +1,3 @@
-
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Inter_400Regular, Inter_700Bold } from "@expo-google-fonts/inter";
 import { Outfit_400Regular, Outfit_700Bold } from "@expo-google-fonts/outfit";
@@ -13,20 +12,18 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import "../global.css";
-import { Provider } from "react-redux";
-import { store } from "@/store/store";
-import { AuthGuard } from "@/components/AuthGuard";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PortalHost } from "@rn-primitives/portal";
 import { Platform, Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider } from "react-redux";
+import { AuthGuard } from "@/components/AuthGuard";
 import { useColorScheme } from "@/hooks/useColorScheme";
-
+import { store } from "@/store/store";
 
 if (__DEV__) {
 	const { nativeServer } = require("@/mocks/native");
 	nativeServer.listen();
 }
-
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -79,11 +76,16 @@ function RootLayoutNav() {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<Provider store={store}>
-				<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+				<ThemeProvider
+					value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+				>
 					<AuthGuard>
 						<Stack>
 							<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-							<Stack.Screen name="login" options={{ headerShown: false, animation: 'fade' }} />
+							<Stack.Screen
+								name="login"
+								options={{ headerShown: false, animation: "fade" }}
+							/>
 						</Stack>
 					</AuthGuard>
 					{Platform.OS !== "web" && <PortalHost />}

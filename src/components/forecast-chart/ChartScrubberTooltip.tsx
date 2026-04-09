@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { Circle, G, Line, Rect, Text as SvgText } from "react-native-svg";
+import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
 import { calculateScrubberData } from "@/lib/scrubberUtils";
 import { baseColors, palette } from "@/themes/config";
 import { useChartContext, useChartScrubberContext } from "./ChartContext";
-import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
 import { CURVE_DEFINITIONS } from "./config";
 
 const formatScrubTime = (timeStr: string) => {
@@ -17,7 +17,8 @@ const formatScrubTime = (timeStr: string) => {
 
 const ChartScrubberTooltip = memo(() => {
 	const { scrubberIndex } = useChartScrubberContext();
-	const { displayPoints, xScale, yScale, innerWidth, innerHeight } = useChartContext();
+	const { displayPoints, xScale, yScale, innerWidth, innerHeight } =
+		useChartContext();
 	const { state } = useWeatherComparisonContext();
 	const activeCurves = state.activeCurves || [];
 
@@ -47,7 +48,10 @@ const ChartScrubberTooltip = memo(() => {
 
 	const estimatedWidth = Math.max(90, tooltipText.length * 6.5 + 32);
 	const rectX = x - estimatedWidth / 2;
-	const clampedRectX = Math.max(0, Math.min(rectX, innerWidth - estimatedWidth));
+	const clampedRectX = Math.max(
+		0,
+		Math.min(rectX, innerWidth - estimatedWidth),
+	);
 	const textX = clampedRectX + estimatedWidth / 2;
 
 	return (
@@ -61,9 +65,10 @@ const ChartScrubberTooltip = memo(() => {
 				strokeWidth={1.5}
 				strokeDasharray="6,6"
 			/>
-			
+
 			{activeCurves.map((curveType) => {
-				const config = CURVE_DEFINITIONS[curveType as keyof typeof CURVE_DEFINITIONS];
+				const config =
+					CURVE_DEFINITIONS[curveType as keyof typeof CURVE_DEFINITIONS];
 				const val = (scrubResult as any)[curveType];
 				if (val === undefined) return null;
 				const cy = yScale(val);

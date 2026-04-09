@@ -11,7 +11,9 @@ export async function POST(request: Request) {
 		const apiKey = process.env.OPENAI_API_KEY;
 		if (!apiKey) {
 			return new Response(
-				JSON.stringify({ error: "Server configuration error: missing API key" }),
+				JSON.stringify({
+					error: "Server configuration error: missing API key",
+				}),
 				{ status: 500, headers: { "Content-Type": "application/json" } },
 			);
 		}
@@ -19,7 +21,9 @@ export async function POST(request: Request) {
 		const body = await request.json();
 
 		const llm = ai({ name: "openai", apiKey });
-		const result = await messageSignature.forward(llm, body, { stream: false } as any);
+		const result = await messageSignature.forward(llm, body, {
+			stream: false,
+		} as any);
 
 		return new Response(JSON.stringify(result), {
 			status: 200,

@@ -6,9 +6,9 @@ import Animated, {
 	useSharedValue,
 	withSpring,
 } from "react-native-reanimated";
-import { AVAILABLE_CURVES, CURVE_DEFINITIONS } from "./config";
 import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
 import { baseColors } from "@/themes/config";
+import { AVAILABLE_CURVES, CURVE_DEFINITIONS } from "./config";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -26,8 +26,12 @@ export function ChartConfigPopover() {
 	return (
 		<View>
 			<AnimatedPressable
-				onPressIn={() => (scale.value = withSpring(0.95, { damping: 20, stiffness: 300 }))}
-				onPressOut={() => (scale.value = withSpring(1, { damping: 20, stiffness: 300 }))}
+				onPressIn={() =>
+					(scale.value = withSpring(0.95, { damping: 20, stiffness: 300 }))
+				}
+				onPressOut={() =>
+					(scale.value = withSpring(1, { damping: 20, stiffness: 300 }))
+				}
 				onPress={() => setOpen(true)}
 				className="p-2 rounded-full bg-card/80 border border-border shadow-sm items-center justify-center opacity-90 hover:opacity-100"
 				style={animatedStyle}

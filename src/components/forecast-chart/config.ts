@@ -1,5 +1,5 @@
-import { palette } from "@/themes/config";
 import type { ProcessedPoint } from "@/lib/weatherAnalyzer";
+import { palette } from "@/themes/config";
 
 export type DataCurveType = "temp" | "precip" | "wind" | "uv" | "aqi";
 
@@ -37,4 +37,10 @@ export const CURVE_DEFINITIONS: Record<DataCurveType, CurveConfig> = {
 	},
 };
 
-export const AVAILABLE_CURVES: DataCurveType[] = ["temp", "precip", "wind", "uv", "aqi"];
+export const AVAILABLE_CURVES: DataCurveType[] = [
+	"temp",
+	"precip",
+	"wind",
+	"uv",
+	"aqi",
+];

@@ -1,6 +1,7 @@
 import type React from "react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import type { DataCurveType } from "@/components/forecast-chart/config";
 import { fetchInitialLocation } from "@/features/event/eventSlice";
 import { getSlotBounds, getUpcomingDates } from "@/lib/dateUtils";
 import {
@@ -9,7 +10,6 @@ import {
 } from "@/lib/weatherAnalyzer";
 import { useGetForecastQuery } from "@/store/api";
 import type { AppDispatch, RootState } from "@/store/store";
-import type { DataCurveType } from "@/components/forecast-chart/config";
 
 export interface WeatherComparisonState {
 	location: string;
@@ -66,9 +66,7 @@ export function WeatherComparisonProvider({
 
 	const toggleCurve = (curve: DataCurveType) => {
 		setActiveCurves((prev) =>
-			prev.includes(curve)
-				? prev.filter((c) => c !== curve)
-				: [...prev, curve],
+			prev.includes(curve) ? prev.filter((c) => c !== curve) : [...prev, curve],
 		);
 	};
 

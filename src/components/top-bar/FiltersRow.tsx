@@ -109,7 +109,12 @@ export function FiltersRow() {
 				>
 					<SelectGroup>
 						{slots.map((slot) => (
-							<SelectItem testID="time-slot-pick" key={slot} label={slot} value={slot}>
+							<SelectItem
+								testID="time-slot-pick"
+								key={slot}
+								label={slot}
+								value={slot}
+							>
 								<Text>{slot}</Text>
 							</SelectItem>
 						))}

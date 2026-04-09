@@ -167,7 +167,9 @@ describe("weatherAnalyzer", () => {
 				maxSevereRisk: 20,
 				avgCloudCover: 90,
 			};
-			expect(await getFullMessage(generateMessage(metrics))).toContain("Severe weather risk");
+			expect(await getFullMessage(generateMessage(metrics))).toContain(
+				"Severe weather risk",
+			);
 		});
 
 		it("mentions UV index if it is extreme", async () => {
@@ -180,7 +182,9 @@ describe("weatherAnalyzer", () => {
 				maxSevereRisk: 0,
 				avgCloudCover: 0,
 			};
-			expect(await getFullMessage(generateMessage(metrics))).toContain("Extreme UV risk");
+			expect(await getFullMessage(generateMessage(metrics))).toContain(
+				"Extreme UV risk",
+			);
 		});
 
 		it("mentions absolutely gorgeous for optimal conditions", async () => {

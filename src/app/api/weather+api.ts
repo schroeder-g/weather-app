@@ -29,7 +29,10 @@ export async function GET(request: Request) {
 			console.error("Visual Crossing Error:", errorText);
 			return new Response(
 				JSON.stringify({ error: "Failed to fetch weather data" }),
-				{ status: response.status, headers: { "Content-Type": "application/json" } },
+				{
+					status: response.status,
+					headers: { "Content-Type": "application/json" },
+				},
 			);
 		}
 

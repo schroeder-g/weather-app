@@ -8,9 +8,9 @@ import Animated, {
 	withSequence,
 	withTiming,
 } from "react-native-reanimated";
-import { G, Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import { useChartContext } from "./ChartContext";
+import { Defs, G, LinearGradient, Path, Stop } from "react-native-svg";
 import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
+import { useChartContext } from "./ChartContext";
 import { CURVE_DEFINITIONS } from "./config";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -21,20 +21,22 @@ const ChartDataCurves = memo(() => {
 	const { activeCurves } = state;
 
 	const curvePaths = useMemo(() => {
-		return (activeCurves || []).map((curveType) => {
-			const config = CURVE_DEFINITIONS[curveType];
-			const lineGen = d3
-				.line<any>()
-				.x((d, i) => xScale(i))
-				.y((d) => yScale(config.getValue(d)))
-				.curve(d3.curveMonotoneX);
+		return (activeCurves || [])
+			.map((curveType) => {
+				const config = CURVE_DEFINITIONS[curveType];
+				const lineGen = d3
+					.line<any>()
+					.x((d, i) => xScale(i))
+					.y((d) => yScale(config.getValue(d)))
+					.curve(d3.curveMonotoneX);
 
-			return {
-				type: curveType,
-				path: lineGen(displayPoints) as string | null,
-				config,
-			};
-		}).filter((c) => c.path !== null);
+				return {
+					type: curveType,
+					path: lineGen(displayPoints) as string | null,
+					config,
+				};
+			})
+			.filter((c) => c.path !== null);
 	}, [displayPoints, xScale, yScale, activeCurves]);
 
 	const progress = useSharedValue(0);

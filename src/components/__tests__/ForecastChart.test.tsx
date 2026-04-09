@@ -36,8 +36,8 @@ jest.mock("react-native", () => {
 jest.mock("@/features/weather/WeatherComparisonProvider", () => ({
 	useWeatherComparisonContext: () => ({
 		state: { activeCurves: ["temp", "precip"] },
-		actions: {}
-	})
+		actions: {},
+	}),
 }));
 
 describe("ForecastChart Interaction", () => {
@@ -59,7 +59,7 @@ describe("ForecastChart Interaction", () => {
 		// Click at X: 100
 		fireEvent(touchSurface, "responderGrant", {
 			nativeEvent: { locationX: 100, touches: [], changedTouches: [] },
-			touchHistory: { touchBank: [] }
+			touchHistory: { touchBank: [] },
 		});
 
 		// The scrub point should map to something ~6-9 AM range since the width is roughly 340 (400 - margin).
@@ -73,7 +73,7 @@ describe("ForecastChart Interaction", () => {
 			"responderMove",
 			{
 				nativeEvent: { locationX: 100, touches: [], changedTouches: [] },
-				touchHistory: { touchBank: [] }
+				touchHistory: { touchBank: [] },
 			},
 			{ dx: 50, dy: 0 },
 		); // Second arg in PanResponder is gestureState

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, Pressable } from "react-native";
-import { useComparisonPanelContext } from "./context";
-import { Skeleton } from "@/components/ui/skeleton";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { Copy, Check } from "lucide-react-native";
+import { Check, Copy } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useComparisonPanelContext } from "./context";
 
 export function Summary() {
 	const { summary } = useComparisonPanelContext();
@@ -34,7 +34,10 @@ export function Summary() {
 				} else if (summary.message instanceof Promise) {
 					const msg = await summary.message;
 					if (!isCancelled) setResolvedMessage(msg);
-				} else if (summary.message && typeof summary.message[Symbol.asyncIterator] === 'function') {
+				} else if (
+					summary.message &&
+					typeof summary.message[Symbol.asyncIterator] === "function"
+				) {
 					for await (const chunk of summary.message) {
 						if (isCancelled) break;
 						fullMessage += chunk;
@@ -60,7 +63,9 @@ export function Summary() {
 	const copyToClipboard = async () => {
 		if (!resolvedMessage) return;
 		await Clipboard.setStringAsync(resolvedMessage);
-		Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+		Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+			() => {},
+		);
 		setHasCopied(true);
 		setTimeout(() => {
 			setHasCopied(false);
@@ -79,14 +84,23 @@ export function Summary() {
 	return (
 		<Pressable onPress={copyToClipboard} testID="copy-summary-button">
 			{({ pressed }) => (
-				<View className={`flex-row items-start gap-2 transition-opacity duration-200 ${pressed ? "opacity-70" : "opacity-100"}`}>
-					<Text testID="weather-analysis-text" className="text-foreground italic leading-relaxed font-medium text-base flex-1">
+				<View
+					className={`flex-row items-start gap-2 transition-opacity duration-200 ${pressed ? "opacity-70" : "opacity-100"}`}
+				>
+					<Text
+						testID="weather-analysis-text"
+						className="text-foreground italic leading-relaxed font-medium text-base flex-1"
+					>
 						{resolvedMessage ? resolvedMessage : ""}
 					</Text>
 					{resolvedMessage ? (
 						<View className="mt-1 opacity-60">
 							{hasCopied ? (
-								<Icon as={Check} size={16} className="text-green-500 dark:text-green-400" />
+								<Icon
+									as={Check}
+									size={16}
+									className="text-green-500 dark:text-green-400"
+								/>
 							) : (
 								<Icon as={Copy} size={16} className="text-foreground" />
 							)}

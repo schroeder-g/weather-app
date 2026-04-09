@@ -69,7 +69,7 @@ export const fetchInitialLocation = createAsyncThunk(
 				const place = geocode[0];
 				const city = place.city || place.subregion || place.name;
 				const region = place.region;
-				
+
 				let locationName;
 				if (city && region) {
 					locationName = `${city}, ${region}`;
@@ -83,7 +83,7 @@ export const fetchInitialLocation = createAsyncThunk(
 						coordinates: {
 							latitude: location.coords.latitude,
 							longitude: location.coords.longitude,
-						}
+						},
 					};
 				}
 			}
@@ -101,7 +101,10 @@ export const eventSlice = createSlice({
 		setLocation: (state, action: PayloadAction<string>) => {
 			state.location = action.payload;
 		},
-		setCoordinates: (state, action: PayloadAction<{ latitude: number; longitude: number } | null>) => {
+		setCoordinates: (
+			state,
+			action: PayloadAction<{ latitude: number; longitude: number } | null>,
+		) => {
 			state.coordinates = action.payload;
 		},
 		setDayOfWeek: (state, action: PayloadAction<DayOfWeek>) => {
@@ -120,9 +123,9 @@ export const eventSlice = createSlice({
 			.addCase(fetchInitialLocation.fulfilled, (state, action) => {
 				state.isLocating = false;
 				if (action.payload) {
-					// @ts-ignore payload is typed as unknown until we fix the action generic, but it will be {name, coordinates}
+					// @ts-expect-error payload is typed as unknown until we fix the action generic, but it will be {name, coordinates}
 					state.location = (action.payload as any).name;
-					// @ts-ignore
+					// @ts-expect-error
 					state.coordinates = (action.payload as any).coordinates;
 				}
 			})
@@ -133,5 +136,6 @@ export const eventSlice = createSlice({
 	},
 });
 
-export const { setLocation, setCoordinates, setDayOfWeek, setTimeSlot } = eventSlice.actions;
+export const { setLocation, setCoordinates, setDayOfWeek, setTimeSlot } =
+	eventSlice.actions;
 export default eventSlice.reducer;

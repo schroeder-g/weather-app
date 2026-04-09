@@ -1,89 +1,110 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
-import identityReducer, { loginUser, logoutUser, hydrateAuth } from './identitySlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { configureStore } from "@reduxjs/toolkit";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
+import identityReducer, {
+	hydrateAuth,
+	loginUser,
+	logoutUser,
+} from "./identitySlice";
 
 const server = setupServer(
-  http.post('https://api.whether.io/auth/login', async ({ request }) => {
-    const { email, password } = await request.json() as any;
-    if (password === 'bad-password') {
-      return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
-    }
-    return HttpResponse.json({
-      user: { id: 'usr_1', name: 'Jane Doe', email },
-      token: 'valid-token'
-    });
-  }),
-  http.post('https://api.whether.io/auth/logout', () => {
-    return HttpResponse.json({ success: true });
-  })
+	http.post("https://api.whether.io/auth/login", async ({ request }) => {
+		const { email, password } = (await request.json()) as any;
+		if (password === "bad-password") {
+			return HttpResponse.json(
+				{ message: "Invalid credentials" },
+				{ status: 401 },
+			);
+		}
+		return HttpResponse.json({
+			user: { id: "usr_1", name: "Jane Doe", email },
+			token: "valid-token",
+		});
+	}),
+	http.post("https://api.whether.io/auth/logout", () => {
+		return HttpResponse.json({ success: true });
+	}),
 );
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => {
-  server.resetHandlers();
-  AsyncStorage.clear();
+	server.resetHandlers();
+	AsyncStorage.clear();
 });
 afterAll(() => server.close());
 
-describe('Identity Feature (TDD)', () => {
-  const createTestStore = () => configureStore({
-    reducer: { identity: identityReducer }
-  });
+describe("Identity Feature (TDD)", () => {
+	const createTestStore = () =>
+		configureStore({
+			reducer: { identity: identityReducer },
+		});
 
-  it('unauthenticated user cannot login with bad credentials', async () => {
-    const store = createTestStore();
-    
-    await store.dispatch(loginUser({ email: 'jane@whether.io', password: 'bad-password' }));
-    
-    const state = store.getState().identity;
-    expect(state.isAuthenticated).toBe(false);
-    expect(state.user).toBeNull();
-    expect(state.status).toBe('failed');
-    
-    const storedToken = await AsyncStorage.getItem('auth_token');
-    expect(storedToken).toBeNull();
-  });
+	it("unauthenticated user cannot login with bad credentials", async () => {
+		const store = createTestStore();
 
-  it('successful login persists token and updates state', async () => {
-    const store = createTestStore();
-    
-    await store.dispatch(loginUser({ email: 'jane@whether.io', password: 'good-password' }));
-    
-    const state = store.getState().identity;
-    expect(state.isAuthenticated).toBe(true);
-    expect(state.user?.email).toBe('jane@whether.io');
-    expect(state.status).toBe('succeeded');
-    
-    const storedToken = await AsyncStorage.getItem('auth_token');
-    expect(storedToken).toBe('valid-token');
-  });
+		await store.dispatch(
+			loginUser({ email: "jane@whether.io", password: "bad-password" }),
+		);
 
-  it('logout clears persisted state and resets store', async () => {
-    const store = createTestStore();
-    await store.dispatch(loginUser({ email: 'jane@whether.io', password: 'good-password' }));
-    
-    await store.dispatch(logoutUser());
-    
-    const state = store.getState().identity;
-    expect(state.isAuthenticated).toBe(false);
-    expect(state.user).toBeNull();
-    
-    const storedToken = await AsyncStorage.getItem('auth_token');
-    expect(storedToken).toBeNull();
-  });
+		const state = store.getState().identity;
+		expect(state.isAuthenticated).toBe(false);
+		expect(state.user).toBeNull();
+		expect(state.status).toBe("failed");
 
-  it('hydrates auth state from async storage if valid token exists', async () => {
-    await AsyncStorage.setItem('auth_token', 'persisted-token');
-    await AsyncStorage.setItem('auth_user', JSON.stringify({ id: 'usr_1', name: 'Jane Doe', email: 'jane@whether.io' }));
-    
-    const store = createTestStore();
-    await store.dispatch(hydrateAuth());
-    
-    const state = store.getState().identity;
-    expect(state.isAuthenticated).toBe(true);
-    expect(state.user?.name).toBe('Jane Doe');
-    expect(state.status).toBe('succeeded');
-  });
+		const storedToken = await AsyncStorage.getItem("auth_token");
+		expect(storedToken).toBeNull();
+	});
+
+	it("successful login persists token and updates state", async () => {
+		const store = createTestStore();
+
+		await store.dispatch(
+			loginUser({ email: "jane@whether.io", password: "good-password" }),
+		);
+
+		const state = store.getState().identity;
+		expect(state.isAuthenticated).toBe(true);
+		expect(state.user?.email).toBe("jane@whether.io");
+		expect(state.status).toBe("succeeded");
+
+		const storedToken = await AsyncStorage.getItem("auth_token");
+		expect(storedToken).toBe("valid-token");
+	});
+
+	it("logout clears persisted state and resets store", async () => {
+		const store = createTestStore();
+		await store.dispatch(
+			loginUser({ email: "jane@whether.io", password: "good-password" }),
+		);
+
+		await store.dispatch(logoutUser());
+
+		const state = store.getState().identity;
+		expect(state.isAuthenticated).toBe(false);
+		expect(state.user).toBeNull();
+
+		const storedToken = await AsyncStorage.getItem("auth_token");
+		expect(storedToken).toBeNull();
+	});
+
+	it("hydrates auth state from async storage if valid token exists", async () => {
+		await AsyncStorage.setItem("auth_token", "persisted-token");
+		await AsyncStorage.setItem(
+			"auth_user",
+			JSON.stringify({
+				id: "usr_1",
+				name: "Jane Doe",
+				email: "jane@whether.io",
+			}),
+		);
+
+		const store = createTestStore();
+		await store.dispatch(hydrateAuth());
+
+		const state = store.getState().identity;
+		expect(state.isAuthenticated).toBe(true);
+		expect(state.user?.name).toBe("Jane Doe");
+		expect(state.status).toBe("succeeded");
+	});
 });

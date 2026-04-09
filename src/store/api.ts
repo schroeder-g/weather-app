@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { DayData } from "@/lib/weatherAnalyzer";
 import { getBaseApiUrl } from "@/lib/apiUtils";
+import type { DayData } from "@/lib/weatherAnalyzer";
 
 export interface WeatherResponse {
 	address: string;

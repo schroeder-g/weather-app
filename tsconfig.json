@@ -4,7 +4,9 @@
 		"strict": true,
 		"paths": {
 			"@/*": ["./src/*"],
-			"@react-navigation/native": ["./node_modules/@react-navigation/native/lib/typescript/src/index.d.ts"],
+			"@react-navigation/native": [
+				"./node_modules/@react-navigation/native/lib/typescript/src/index.d.ts"
+			],
 			"@rn-primitives/*": ["./node_modules/@rn-primitives/*/dist/index.d.ts"]
 		}
 	},
