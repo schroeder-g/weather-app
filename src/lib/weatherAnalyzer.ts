@@ -1,5 +1,5 @@
-import "./polyfill";
-import { ai, ax } from "@ax-llm/ax";
+
+import { getBaseApiUrl } from "@/lib/apiUtils";
 
 export interface HourlyData {
   datetime: string;
@@ -205,12 +205,6 @@ export function getRecommendation(
   return "Ideal";
 }
 
-const messageSignature = ax(`
-	minTemp:number, maxTemp:number, precipProb:number, maxWind:number, maxUv:number, severeRisk:number, recommendation:string, isLongRange:boolean 
-	-> 
-	message:string "A fun, brief, personable 1-sentence message for event organizers about event viability. Focus on the vibe and if it's a go. Do NOT list specific weather stats."
-`);
-
 export async function* generateMessage(
   metrics: WindowMetrics,
   isLongRange = false,
@@ -225,14 +219,14 @@ export async function* generateMessage(
   };
 
   const severeThreshold = isLongRange ? 55 : 20;
-  const localApiKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
-  if (localApiKey) {
+  // Check if we should attempt dynamic generation
+  if (process.env.EXPO_PUBLIC_AX_ENABLED === "true") {
     try {
-      const llm = ai({ name: "openai", apiKey: localApiKey });
-      const result = await messageSignature.forward(
-        llm,
-        {
+      const response = await fetch(getBaseApiUrl() + "/api/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           minTemp,
           maxTemp,
           precipProb: precip,
@@ -241,13 +235,18 @@ export async function* generateMessage(
           severeRisk: severe,
           recommendation: getRecommendation(metrics, isLongRange),
           isLongRange,
-        },
-        { stream: false } as any
-      );
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
 
       if (result && result.message) {
         // Synthetic streaming: since React Native cannot natively parse raw TCP streams over its JS-XHR bridge automatically,
-        // we execute the completion quickly in block, and then yield the result iteratively so the UI 
+        // we execute the completion block on the server, and then yield the result iteratively so the UI 
         // cleanly mounts the Typewriter effect via the AsyncGenerator pattern!
         const words = result.message.match(/(\S+\s*)/g) || [result.message];
         for (const word of words) {

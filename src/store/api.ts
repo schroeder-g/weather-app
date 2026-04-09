@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { DayData } from "@/lib/weatherAnalyzer";
+import { getBaseApiUrl } from "@/lib/apiUtils";
 
 export interface WeatherResponse {
 	address: string;
@@ -9,14 +10,12 @@ export interface WeatherResponse {
 export const weatherApi = createApi({
 	reducerPath: "weatherApi",
 	baseQuery: fetchBaseQuery({
-		baseUrl:
-			"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/",
+		baseUrl: getBaseApiUrl() + "/api/weather",
 	}),
 	endpoints: (builder) => ({
 		getForecast: builder.query<WeatherResponse, string>({
 			query: (location) => {
-				const apiKey = process.env.EXPO_PUBLIC_VISUAL_CROSSING_API_KEY || "";
-				return `${encodeURIComponent(location)}/next15days?unitGroup=us&include=hours,days&key=${apiKey}&contentType=json`;
+				return `?location=${encodeURIComponent(location)}`;
 			},
 		}),
 	}),
