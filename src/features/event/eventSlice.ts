@@ -12,6 +12,7 @@ interface EventState {
 	timeSlot: TimeSlot;
 	isLocating: boolean;
 	locationError: string | null;
+	coordinates: { latitude: number; longitude: number } | null;
 }
 
 const initialState: EventState = {
@@ -20,6 +21,7 @@ const initialState: EventState = {
 	timeSlot: "Afternoon",
 	isLocating: false,
 	locationError: null,
+	coordinates: null,
 };
 
 export const fetchInitialLocation = createAsyncThunk(
@@ -67,10 +69,22 @@ export const fetchInitialLocation = createAsyncThunk(
 				const place = geocode[0];
 				const city = place.city || place.subregion || place.name;
 				const region = place.region;
+				
+				let locationName;
 				if (city && region) {
-					return `${city}, ${region}`;
+					locationName = `${city}, ${region}`;
 				} else if (city) {
-					return city;
+					locationName = city;
+				}
+
+				if (locationName) {
+					return {
+						name: locationName,
+						coordinates: {
+							latitude: location.coords.latitude,
+							longitude: location.coords.longitude,
+						}
+					};
 				}
 			}
 			return rejectWithValue("Could not determine location name");
@@ -86,6 +100,9 @@ export const eventSlice = createSlice({
 	reducers: {
 		setLocation: (state, action: PayloadAction<string>) => {
 			state.location = action.payload;
+		},
+		setCoordinates: (state, action: PayloadAction<{ latitude: number; longitude: number } | null>) => {
+			state.coordinates = action.payload;
 		},
 		setDayOfWeek: (state, action: PayloadAction<DayOfWeek>) => {
 			state.dayOfWeek = action.payload;
@@ -103,7 +120,10 @@ export const eventSlice = createSlice({
 			.addCase(fetchInitialLocation.fulfilled, (state, action) => {
 				state.isLocating = false;
 				if (action.payload) {
-					state.location = action.payload;
+					// @ts-ignore payload is typed as unknown until we fix the action generic, but it will be {name, coordinates}
+					state.location = (action.payload as any).name;
+					// @ts-ignore
+					state.coordinates = (action.payload as any).coordinates;
 				}
 			})
 			.addCase(fetchInitialLocation.rejected, (state, action) => {
@@ -113,5 +133,5 @@ export const eventSlice = createSlice({
 	},
 });
 
-export const { setLocation, setDayOfWeek, setTimeSlot } = eventSlice.actions;
+export const { setLocation, setCoordinates, setDayOfWeek, setTimeSlot } = eventSlice.actions;
 export default eventSlice.reducer;
