@@ -1,10 +1,11 @@
 import { palette } from "@/themes/config";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { G, Line, Text as SvgText } from "react-native-svg";
 import { useChartContext } from "./ChartContext";
 
 const ChartGrid = memo(() => {
-  const { innerWidth, yTicks, yScale } = useChartContext();
+  const { innerWidth, yScale } = useChartContext();
+  const yTicks = useMemo(() => yScale.ticks(4), [yScale]);
 
   return (
     <G>

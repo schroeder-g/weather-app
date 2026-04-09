@@ -2,55 +2,9 @@ import { Info } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { baseColors } from "@/themes/config";
-function ChartLegendPopover() {
-	const [open, setOpen] = useState(false);
-	return (
-		<View>
-			<Pressable onPress={() => setOpen(true)} className="p-1">
-				<Info size={20} className="text-muted-foreground" />
-			</Pressable>
-			<Modal
-				visible={open}
-				transparent={true}
-				animationType="fade"
-				onRequestClose={() => setOpen(false)}
-			>
-				<Pressable 
-					className="flex-1 justify-center items-center bg-black/40"
-					onPress={() => setOpen(false)}
-				>
-					<Pressable 
-						className="bg-card w-11/12 max-w-sm p-6 rounded-2xl shadow-xl border border-border relative"
-						onPress={(e) => e.stopPropagation()}
-					>
-						<Text className="text-sm text-foreground mb-4 text-center leading-relaxed">
-							Chart displays expected conditions based on selected weather data.
-						</Text>
-						<View className="flex-col gap-3 w-full px-2">
-							<View className="flex-row items-center gap-3">
-								<View className="w-4 h-4 rounded-full" style={{ backgroundColor: baseColors.orange }} />
-								<Text className="text-muted-foreground text-sm">Temperature (°F)</Text>
-							</View>
-							<View className="flex-row items-center gap-3">
-								<View className="w-4 h-4 rounded-full" style={{ backgroundColor: baseColors.blue }} />
-								<Text className="text-muted-foreground text-sm">Precipitation (%)</Text>
-							</View>
-						</View>
-						<Pressable 
-							className="absolute top-2 right-2 p-2" 
-							onPress={() => setOpen(false)}
-						>
-							<Text className="text-muted-foreground font-bold">✕</Text>
-						</Pressable>
-					</Pressable>
-				</Pressable>
-			</Modal>
-		</View>
-	);
-}
 import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
-import ComparisonPanel from "@/components/ComparisonPanel";
+import ComparisonPanel from "@/components/comparison-panel";
 import ForecastChart from "@/components/ForecastChart";
 import MessageBlast from "@/components/MessageBlast";
 import TopBar from "@/components/TopBar";
@@ -59,6 +13,8 @@ import { getSlotBounds, getUpcomingDates } from "@/lib/dateUtils";
 import { analyzeWeatherWindow } from "@/lib/weatherAnalyzer";
 import { useGetForecastQuery } from "@/store/api";
 import type { AppDispatch, RootState } from "@/store/store";
+
+import ChartLegendPopover from "@/components/forecast-chart/ChartLegendPopover";
 
 export default function TabOneScreen() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -123,6 +79,7 @@ export default function TabOneScreen() {
 				nextWeekMatch,
 				startHour,
 				endHour,
+				true
 			);
 
 			return {
@@ -135,8 +92,8 @@ export default function TabOneScreen() {
 
 	// Determine main copy for blast
 	const isBlastNextWeek =
-		thisWeekResult?.recommendation === "Postpone Candidate" &&
-		nextWeekResult?.recommendation !== "Postpone Candidate";
+		thisWeekResult?.recommendation === "Warning (Postpone)" &&
+		nextWeekResult?.recommendation !== "Warning (Postpone)";
 	const blastDateStr = isBlastNextWeek
 		? nextWeekDate?.toDateString()
 		: thisWeekDate?.toDateString();
@@ -197,20 +154,26 @@ export default function TabOneScreen() {
 							layout={LinearTransition.springify()}
 						>
 							<Animated.View layout={LinearTransition.springify()} className="flex-row flex-wrap sm:flex-nowrap justify-between gap-4 mt-2 mb-2">
-								<ComparisonPanel
-									title="This Week"
-									date={thisWeekDate}
+								<ComparisonPanel.Root
 									summary={thisWeekResult}
 									isSelected={selectedWeek === "this"}
 									onPress={() => setSelectedWeek("this")}
-								/>
-								<ComparisonPanel
-									title="Next Week"
-									date={nextWeekDate}
+								>
+									<ComparisonPanel.Header title="This Week" date={thisWeekDate} />
+									<ComparisonPanel.Metrics />
+									<ComparisonPanel.Recommendation />
+									<ComparisonPanel.Summary />
+								</ComparisonPanel.Root>
+								<ComparisonPanel.Root
 									summary={nextWeekResult}
 									isSelected={selectedWeek === "next"}
 									onPress={() => setSelectedWeek("next")}
-								/>
+								>
+									<ComparisonPanel.Header title="Next Week" date={nextWeekDate} />
+									<ComparisonPanel.Metrics />
+									<ComparisonPanel.Recommendation />
+									<ComparisonPanel.Summary />
+								</ComparisonPanel.Root>
 							</Animated.View>
 
 							<ForecastChart

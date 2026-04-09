@@ -2,9 +2,11 @@ import { palette } from "@/themes/config";
 import React, { memo } from "react";
 import { Path } from "react-native-svg";
 import { useChartContext } from "./ChartContext";
+import { useChartBounds } from "./useChartBounds";
 
 const ChartHighlightRegion = memo(() => {
-  const { startX, endX, innerHeight, hasStartIndex, hasEndIndex } = useChartContext();
+  const { innerHeight } = useChartContext();
+  const { startX, endX, hasStartIndex, hasEndIndex } = useChartBounds();
   const hasValidSlot = hasStartIndex && hasEndIndex;
 
   if (!hasValidSlot) return null;

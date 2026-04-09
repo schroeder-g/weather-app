@@ -90,48 +90,6 @@ export default function ForecastChart({ data }: Props) {
     [yMin, yMax, innerHeight],
   );
 
-  const yTicks = useMemo(() => yScale.ticks(4), [yScale]);
-
-  const { tempPath, precipPath } = useMemo(() => {
-    const tempLineGen = d3
-      .line<any>()
-      .x((d, i) => xScale(i))
-      .y((d) => yScale(d.temp))
-      .curve(d3.curveMonotoneX);
-
-    const precipLineGen = d3
-      .line<any>()
-      .x((d, i) => xScale(i))
-      .y((d) => yScale(d.precip))
-      .curve(d3.curveMonotoneX);
-
-    return {
-      tempPath: tempLineGen(displayPoints) as string | null,
-      precipPath: precipLineGen(displayPoints) as string | null,
-    };
-  }, [displayPoints, xScale, yScale]);
-
-  const { startX, endX, hasStartIndex, hasEndIndex } = useMemo(() => {
-    let sx = 0;
-    let ex = innerWidth;
-    const sIndex = displayPoints.findIndex(
-      (p) => parseInt(p.time.split(":")[0], 10) === windowStartHour,
-    );
-    const eIndex = displayPoints.findIndex(
-      (p) => parseInt(p.time.split(":")[0], 10) === windowEndHour,
-    );
-
-    if (sIndex >= 0) sx = xScale(sIndex);
-    if (eIndex >= 0) ex = xScale(eIndex);
-
-    return {
-      startX: sx,
-      endX: ex,
-      hasStartIndex: sIndex >= 0,
-      hasEndIndex: eIndex >= 0,
-    };
-  }, [displayPoints, windowStartHour, windowEndHour, innerWidth, xScale]);
-
   if (allPoints.length === 0 || displayPoints.length === 0) {
     return (
       <View
@@ -148,18 +106,11 @@ export default function ForecastChart({ data }: Props) {
     innerWidth,
     innerHeight,
     margin,
-    startX,
-    endX,
-    hasStartIndex,
-    hasEndIndex,
     displayPoints,
-    windowStartHour: windowStartHour || 0,
-    windowEndHour: windowEndHour || 0,
+    windowStartHour: windowStartHour || undefined,
+    windowEndHour: windowEndHour || undefined,
     xScale,
-    yScale,
-    yTicks,
-    tempPath,
-    precipPath
+    yScale
   };
 
   return (

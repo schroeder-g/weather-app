@@ -2,6 +2,7 @@ import { palette } from "@/themes/config";
 import React, { memo } from "react";
 import { G, Line, Text as SvgText } from "react-native-svg";
 import { useChartContext } from "./ChartContext";
+import { useChartBounds } from "./useChartBounds";
 
 const ChartXAxis = memo(() => {
   const { 
@@ -9,12 +10,12 @@ const ChartXAxis = memo(() => {
     windowStartHour, 
     windowEndHour, 
     xScale, 
-    innerHeight, 
-    startX, 
-    endX, 
-    hasStartIndex, 
-    hasEndIndex 
+    innerHeight 
   } = useChartContext();
+
+  const { startX, endX, hasStartIndex, hasEndIndex } = useChartBounds();
+
+  if (windowStartHour === undefined || windowEndHour === undefined) return null;
 
   return (
     <G>

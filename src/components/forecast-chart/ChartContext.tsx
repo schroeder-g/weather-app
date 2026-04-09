@@ -4,28 +4,19 @@ import type { ProcessedPoint } from "@/lib/weatherAnalyzer";
 
 // --- Static Values Context ---
 interface ChartContextValue {
-	// Dimensions & Bounds
+	// Dimensions
 	innerWidth: number;
 	innerHeight: number;
 	margin: { top: number; right: number; bottom: number; left: number };
-	startX: number;
-	endX: number;
-	hasStartIndex: boolean;
-	hasEndIndex: boolean;
 
 	// Data
 	displayPoints: ProcessedPoint[];
-	windowStartHour: number;
-	windowEndHour: number;
+	windowStartHour: number | undefined;
+	windowEndHour: number | undefined;
 
-	// Scales & Ticks
+	// Scales
 	xScale: d3.ScaleLinear<number, number>;
 	yScale: d3.ScaleLinear<number, number>;
-	yTicks: number[];
-
-	// Data Curves
-	tempPath: string | null;
-	precipPath: string | null;
 
 	// Scrubber State
 	scrubberIndex: number | null;

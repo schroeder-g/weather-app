@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import ForecastChart from "./ForecastChart";
+import ForecastChart from "../ForecastChart";
 
 const mockSummary = {
 	minTemp: 40,
@@ -16,8 +16,12 @@ const mockSummary = {
 		precip: 0,
 		wind: 5,
 	})),
-	windowStartHour: 10,
-	windowEndHour: 14,
+	windowStartHour: 8,
+	windowEndHour: 10,
+	isLongRange: false,
+	maxUvIndex: 5,
+	maxSevereRisk: 0,
+	avgCloudCover: 20
 };
 
 // Mock the react-native hook for window dimension consistency
