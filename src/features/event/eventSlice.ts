@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DayOfWeek, TimeSlot } from '../../lib/dateUtils';
+import { DayOfWeek, TimeSlot } from '@/lib/dateUtils';
 
 interface EventState {
   location: string;

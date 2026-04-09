@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { DayOfWeek, TimeSlot } from '../lib/dateUtils';
-import { setLocation, setDayOfWeek, setTimeSlot } from '../features/event/eventSlice';
+import { RootState } from '@/store/store';
+import { DayOfWeek, TimeSlot } from '@/lib/dateUtils';
+import { setLocation, setDayOfWeek, setTimeSlot } from '@/features/event/eventSlice';
 import { MapPin, Clock, Menu } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

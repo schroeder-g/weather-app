@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { weatherApi } from './api';
-import eventReducer from '../features/event/eventSlice';
+import eventReducer from '@/features/event/eventSlice';
 
 export const store = configureStore({
   reducer: {

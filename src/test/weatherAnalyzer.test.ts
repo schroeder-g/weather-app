@@ -1,4 +1,4 @@
-import { analyzeWeatherWindow, generateMessage, getRecommendation, HourlyData } from '../lib/weatherAnalyzer';
+import { analyzeWeatherWindow, generateMessage, getRecommendation, HourlyData } from '@/lib/weatherAnalyzer';
 
 describe('weatherAnalyzer', () => {
 

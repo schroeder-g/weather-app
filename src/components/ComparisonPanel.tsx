@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { WeatherSummary } from '../lib/weatherAnalyzer';
+import { WeatherSummary } from '@/lib/weatherAnalyzer';
 import { Sun, CloudRain, Wind, AlertCircle, CheckCircle } from 'lucide-react-native';
 
 interface Props {

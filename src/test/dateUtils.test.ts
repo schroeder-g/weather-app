@@ -1,4 +1,4 @@
-import { getUpcomingDates, TimeSlot, DayOfWeek, getSlotBounds } from '../lib/dateUtils';
+import { getUpcomingDates, TimeSlot, DayOfWeek, getSlotBounds } from '@/lib/dateUtils';
 
 describe('dateUtils', () => {
   describe('getUpcomingDates', () => {

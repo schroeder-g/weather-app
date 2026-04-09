@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Path, G, Line, Text as SvgText } from 'react-native-svg';
 import * as d3 from 'd3';
-import { WeatherSummary } from '../lib/weatherAnalyzer';
+import { WeatherSummary } from '@/lib/weatherAnalyzer';
 
 interface Props {
   thisWeek: WeatherSummary;

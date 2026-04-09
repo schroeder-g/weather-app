@@ -1,14 +1,14 @@
 import React, { useMemo } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { useSelector } from "react-redux";
-import ComparisonPanel from "../../components/ComparisonPanel";
-import ForecastChart from "../../components/ForecastChart";
-import MessageBlast from "../../components/MessageBlast";
-import TopBar from "../../components/TopBar";
-import { getSlotBounds, getUpcomingDates } from "../../lib/dateUtils";
-import { analyzeWeatherWindow } from "../../lib/weatherAnalyzer";
-import { useGetForecastQuery } from "../../store/api";
-import type { RootState } from "../../store/store";
+import ComparisonPanel from "@/components/ComparisonPanel";
+import ForecastChart from "@/components/ForecastChart";
+import MessageBlast from "@/components/MessageBlast";
+import TopBar from "@/components/TopBar";
+import { getSlotBounds, getUpcomingDates } from "@/lib/dateUtils";
+import { analyzeWeatherWindow } from "@/lib/weatherAnalyzer";
+import { useGetForecastQuery } from "@/store/api";
+import type { RootState } from "@/store/store";
 
 export default function TabOneScreen() {
 	const { location, dayOfWeek, timeSlot } = useSelector(
