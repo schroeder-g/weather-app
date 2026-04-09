@@ -6,21 +6,28 @@ import {
 	Wind,
 } from "lucide-react-native";
 import React from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import type { WeatherSummary } from "@/lib/weatherAnalyzer";
 
 interface Props {
 	title: string;
 	date: Date;
 	summary: WeatherSummary;
+	isSelected?: boolean;
+	onPress?: () => void;
 }
 
-export default function ComparisonPanel({ title, date, summary }: Props) {
+export default function ComparisonPanel({ title, date, summary, isSelected, onPress }: Props) {
 	const isGood = summary.recommendation === "Good";
 	const isMixed = summary.recommendation === "Mixed";
 
 	return (
-		<View className="flex-1 mb-6 min-w-[300px]">
+		<Pressable 
+			onPress={onPress}
+			className={`flex-1 mb-6 min-w-[300px] p-4 rounded-xl border-2 transition-all ${
+				isSelected ? "border-blue-500 bg-blue-50/30" : "border-transparent bg-transparent"
+			}`}
+		>
 			<Text className="text-xl font-bold text-gray-800 mb-1">{title}</Text>
 			<Text className="text-sm text-gray-500 mb-4">{date.toDateString()}</Text>
 
@@ -72,6 +79,6 @@ export default function ComparisonPanel({ title, date, summary }: Props) {
 			</View>
 
 			<Text className="text-gray-700 italic">"{summary.message}"</Text>
-		</View>
+		</Pressable>
 	);
 }

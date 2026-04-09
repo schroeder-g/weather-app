@@ -19,6 +19,9 @@ export interface WeatherSummary {
 	recommendation: RecommendationSignal;
 	message: string;
 	points: { time: string; temp: number; precip: number; wind: number }[];
+	allPoints: { time: string; temp: number; precip: number; wind: number }[];
+	windowStartHour: number;
+	windowEndHour: number;
 }
 
 export type RecommendationSignal = "Good" | "Mixed" | "Postpone Candidate";
@@ -37,6 +40,9 @@ export function analyzeWeatherWindow(
 			recommendation: "Mixed",
 			message: "No data available",
 			points: [],
+			allPoints: [],
+			windowStartHour: startHour,
+			windowEndHour: endHour,
 		};
 	}
 
@@ -54,6 +60,9 @@ export function analyzeWeatherWindow(
 			recommendation: "Mixed",
 			message: "No data for time slot",
 			points: [],
+			allPoints: [],
+			windowStartHour: startHour,
+			windowEndHour: endHour,
 		};
 	}
 
@@ -86,6 +95,13 @@ export function analyzeWeatherWindow(
 		maxWindSpeed,
 	);
 
+	const allPoints = day.hours.map((h) => ({
+		time: h.datetime.substring(0, 5),
+		temp: h.temp,
+		precip: h.precipprob,
+		wind: h.windspeed,
+	}));
+
 	return {
 		minTemp,
 		maxTemp,
@@ -94,6 +110,9 @@ export function analyzeWeatherWindow(
 		recommendation,
 		message,
 		points,
+		allPoints,
+		windowStartHour: startHour,
+		windowEndHour: endHour,
 	};
 }
 
