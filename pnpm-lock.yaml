@@ -17,6 +17,9 @@ importers:
       '@expo-google-fonts/outfit':
         specifier: ^0.2.3
         version: 0.2.3
+      '@expo/server':
+        specifier: ^0.7.5
+        version: 0.7.5
       '@expo/vector-icons':
         specifier: ^15.0.3
         version: 15.1.1(expo-font@14.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -894,6 +897,10 @@ packages:
 
   '@expo/sdk-runtime-versions@1.0.0':
     resolution: {integrity: sha512-Doz2bfiPndXYFPMRwPyGa1k5QaKDVpY806UJj570epIiMzWaYyCtobasyfC++qfIXVb5Ocy7r3tP9d62hAQ7IQ==}
+
+  '@expo/server@0.7.5':
+    resolution: {integrity: sha512-aNVcerBSJEcUspvXRWChEgFhix1gTNIcgFDevaU/A1+TkfbejNIjGX4rfLEpfyRzzdLIRuOkBNjD+uTYMzohyg==}
+    engines: {node: '>=20.16.0'}
 
   '@expo/spawn-async@1.7.2':
     resolution: {integrity: sha512-QdWi16+CHB9JYP7gma19OVVg0BFkvU8zNj9GjWorYI8Iv8FUxjOCcYRuAmX4s/h91e4e7BPsskc8cSrZYho9Ew==}
@@ -6821,6 +6828,13 @@ snapshots:
   '@expo/schema-utils@0.1.8': {}
 
   '@expo/sdk-runtime-versions@1.0.0': {}
+
+  '@expo/server@0.7.5':
+    dependencies:
+      abort-controller: 3.0.0
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
 
   '@expo/spawn-async@1.7.2':
     dependencies:
