@@ -8,8 +8,8 @@ import Animated, {
 	withSequence,
 	withTiming,
 } from "react-native-reanimated";
-import { G, Path } from "react-native-svg";
-import { baseColors } from "@/themes/config";
+import { G, Path, Defs, LinearGradient, Stop } from "react-native-svg";
+import { palette } from "@/themes/config";
 import { useChartContext } from "./ChartContext";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -66,12 +66,36 @@ const ChartDataCurves = memo(() => {
 
 	return (
 		<G>
+			<Defs>
+				<LinearGradient
+					id="tempGradient"
+					x1="0"
+					y1="0"
+					x2="0"
+					y2={innerHeight}
+					gradientUnits="userSpaceOnUse"
+				>
+					<Stop offset="0" stopColor={palette.orange[500]} />
+					<Stop offset="1" stopColor={palette.orange[500]} stopOpacity={0.2} />
+				</LinearGradient>
+				<LinearGradient
+					id="precipGradient"
+					x1="0"
+					y1="0"
+					x2="0"
+					y2={innerHeight}
+					gradientUnits="userSpaceOnUse"
+				>
+					<Stop offset="0" stopColor={palette.blue[500]} />
+					<Stop offset="1" stopColor={palette.blue[500]} stopOpacity={0.2} />
+				</LinearGradient>
+			</Defs>
 			{tempPath && (
 				<AnimatedPath
 					d={tempPath}
 					animatedProps={animatedProps}
 					fill="none"
-					stroke={baseColors.orange}
+					stroke="url(#tempGradient)"
 					strokeWidth={3}
 					vectorEffect="non-scaling-stroke"
 				/>
@@ -81,7 +105,7 @@ const ChartDataCurves = memo(() => {
 					d={precipPath}
 					animatedProps={animatedProps}
 					fill="none"
-					stroke={baseColors.blue}
+					stroke="url(#precipGradient)"
 					strokeWidth={3}
 					vectorEffect="non-scaling-stroke"
 				/>
