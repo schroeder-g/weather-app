@@ -2,18 +2,29 @@ import * as Clipboard from "expo-clipboard";
 import { Copy } from "lucide-react-native";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
+import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
 
-interface Props {
-	location: string;
-	dateStr: string;
-	summaryMsg: string;
-}
+export default function MessageBlast() {
+	const { state } = useWeatherComparisonContext();
+	const { location, thisWeekResult, nextWeekResult, thisWeekDate, nextWeekDate } = state;
 
-export default function MessageBlast({ location, dateStr, summaryMsg }: Props) {
+	// Determine main copy for blast
+	const isBlastNextWeek =
+		thisWeekResult?.recommendation === "Warning (Postpone)" &&
+		nextWeekResult?.recommendation !== "Warning (Postpone)";
+	
+	const blastDateStr = isBlastNextWeek
+		? nextWeekDate?.toDateString()
+		: thisWeekDate?.toDateString();
+		
+	const blastSummary = isBlastNextWeek
+		? nextWeekResult?.message
+		: thisWeekResult?.message;
+
 	const blastText = `Hey everyone!
 
-Upcoming meetup update for ${dateStr} at ${location}:
-${summaryMsg}
+Upcoming meetup update for ${blastDateStr || ""} at ${location}:
+${blastSummary || ""}
 
 See you there!`;
 
