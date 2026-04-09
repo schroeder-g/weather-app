@@ -3,9 +3,9 @@ import React from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FiltersRow } from "./top-bar/FiltersRow";
-import { LocationRow } from "./top-bar/LocationRow";
-import { TopBarHeader } from "./top-bar/TopBarHeader";
+import { FiltersRow } from "./FiltersRow";
+import { LocationRow } from "./LocationRow";
+import { TopBarHeader } from "./TopBarHeader";
 
 export default function TopBar() {
 	const insets = useSafeAreaInsets();
