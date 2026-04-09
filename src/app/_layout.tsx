@@ -8,6 +8,8 @@ import 'react-native-reanimated';
 import '../global.css';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { PortalHost } from '@rn-primitives/portal';
+import { Platform } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -58,6 +60,7 @@ function RootLayoutNav() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
+        {Platform.OS !== 'web' && <PortalHost />}
       </ThemeProvider>
     </Provider>
   );

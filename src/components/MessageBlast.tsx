@@ -24,9 +24,9 @@ See you there!`;
   };
 
   return (
-    <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mt-6 mb-6">
+    <View className="my-6">
       <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-lg font-bold text-gray-800">Message Blast Preview</Text>
+        <Text className="text-lg font-bold text-gray-800">Message Blast</Text>
         <Pressable 
           onPress={handleCopy}
           className="flex-row items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg"

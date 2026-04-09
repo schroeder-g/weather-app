@@ -87,7 +87,7 @@ export function generateMessage(minTemp: number, maxTemp: number, precip: number
   }
 
   if (maxTemp > 90) {
-    return 'It will be quite hot. Bring plenty of water and seek shade!';
+    return 'It will be toasty. Bring plenty of water and seek shade!';
   }
 
   if (minTemp < 40) {

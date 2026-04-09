@@ -14,7 +14,7 @@ export default function ComparisonPanel({ title, date, summary }: Props) {
   const isMixed = summary.recommendation === 'Mixed';
 
   return (
-    <View className="flex-1 p-4 m-2 bg-white rounded-xl shadow-sm border border-gray-100 min-w-[300px]">
+    <View className="flex-1 mb-6 min-w-[300px]">
       <Text className="text-xl font-bold text-gray-800 mb-1">{title}</Text>
       <Text className="text-sm text-gray-500 mb-4">{date.toDateString()}</Text>
 

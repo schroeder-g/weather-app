@@ -49,8 +49,8 @@ export default function ForecastChart({ thisWeek, nextWeek }: Props) {
   const nextWeekPath = nextWeek.points.length > 0 ? lineGenerator(nextWeek.points) as string : '';
 
   return (
-    <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mt-4" onLayout={onLayout}>
-      <Text className="text-lg font-bold text-gray-800 mb-2">Temperature Forecast Comparison</Text>
+    <View className="my-4" onLayout={onLayout}>
+      <Text className="text-lg font-bold text-gray-800 mb-2">Forecast</Text>
       
       <View className="flex-row gap-4 mb-4">
         <View className="flex-row items-center gap-1">
