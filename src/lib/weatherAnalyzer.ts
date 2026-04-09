@@ -1,4 +1,4 @@
-import "../polyfill";
+import "./polyfill";
 import { ai, ax } from "@ax-llm/ax";
 
 export interface HourlyData {
