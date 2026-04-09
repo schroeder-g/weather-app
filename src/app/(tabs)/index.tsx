@@ -7,6 +7,8 @@ import ForecastChart from "@/components/ForecastChart";
 import MessageBlast from "@/components/MessageBlast";
 import TopBar from "@/components/TopBar";
 import ChartLegendPopover from "@/components/forecast-chart/ChartLegendPopover";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Text as UIText } from "@/components/ui/text";
 import {
 	WeatherComparisonProvider,
 	useWeatherComparisonContext,
@@ -78,29 +80,32 @@ function WeatherLayout() {
 					>
 						<Animated.View
 							layout={LinearTransition.springify()}
-							className="flex-row flex-wrap sm:flex-nowrap justify-between gap-4 mt-2 mb-2"
+							className="mt-2 mb-2"
 						>
 							<ComparisonPanel.Root
-								summary={thisWeekResult}
-								isSelected={selectedWeek === "this"}
-								onPress={() => actions.setSelectedWeek("this")}
+								summary={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
 							>
-								<ComparisonPanel.Header title="This Week" date={thisWeekDate} />
-								<ComparisonPanel.Metrics />
-								<ComparisonPanel.Recommendation />
-								<ComparisonPanel.Summary />
-							</ComparisonPanel.Root>
-							<ComparisonPanel.Root
-								summary={nextWeekResult}
-								isSelected={selectedWeek === "next"}
-								onPress={() => actions.setSelectedWeek("next")}
-							>
-								<ComparisonPanel.Header title="Next Week" date={nextWeekDate} />
+								<ComparisonPanel.Header 
+									title={selectedWeek === "this" ? "This Week" : "Next Week"} 
+									date={selectedWeek === "this" ? thisWeekDate : nextWeekDate} 
+								/>
 								<ComparisonPanel.Metrics />
 								<ComparisonPanel.Recommendation />
 								<ComparisonPanel.Summary />
 							</ComparisonPanel.Root>
 						</Animated.View>
+
+						<View className="mb-4 z-10 flex-row justify-start items-start">
+							<Tabs 
+								value={selectedWeek} 
+								onValueChange={(val) => actions.setSelectedWeek(val as "this" | "next")}
+							>
+								<TabsList className="flex-row">
+									<TabsTrigger value="this"><UIText>This week</UIText></TabsTrigger>
+									<TabsTrigger value="next"><UIText>Next week</UIText></TabsTrigger>
+								</TabsList>
+							</Tabs>
+						</View>
 
 						<ForecastChart
 							data={selectedWeek === "this" ? thisWeekResult : nextWeekResult}
