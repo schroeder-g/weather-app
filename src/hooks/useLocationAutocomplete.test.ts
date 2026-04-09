@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
-import { useLocationAutocomplete } from "../useLocationAutocomplete";
+import { useLocationAutocomplete } from "./useLocationAutocomplete";
 
 global.fetch = jest.fn();
 

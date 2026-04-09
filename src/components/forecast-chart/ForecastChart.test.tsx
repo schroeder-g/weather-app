@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import ForecastChart from "../ForecastChart";
+import ForecastChart from "./index";
 
 const mockSummary = {
 	minTemp: 40,

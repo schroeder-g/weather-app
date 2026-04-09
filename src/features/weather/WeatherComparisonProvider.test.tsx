@@ -5,12 +5,32 @@ import { Text, View } from "react-native";
 import { Provider } from "react-redux";
 import eventReducer from "@/features/event/eventSlice";
 
+// Mock event slice async thunk
+jest.mock("@/features/event/eventSlice", () => {
+	const actual = jest.requireActual("@/features/event/eventSlice");
+	return {
+		__esModule: true,
+		...actual,
+		fetchInitialLocation: jest.fn(() => ({ type: "mock/fetchInitialLocation" })),
+	};
+});
+
 // Mock the API slice correctly since it's used inside the provider
 import { weatherApi } from "@/store/api";
 import {
 	useWeatherComparisonContext,
 	WeatherComparisonProvider,
 } from "./WeatherComparisonProvider";
+
+// Mock RTK Query hook
+jest.mock("@/store/api", () => ({
+	...jest.requireActual("@/store/api"),
+	useGetForecastQuery: jest.fn(() => ({
+		data: undefined,
+		error: null,
+		isFetching: false,
+	})),
+}));
 
 const createTestStore = () =>
 	configureStore({
@@ -38,9 +58,17 @@ const ConsumerComponent = () => {
 };
 
 describe("WeatherComparisonProvider", () => {
+	beforeAll(() => {
+		jest.useFakeTimers();
+	});
+
+	afterAll(() => {
+		jest.useRealTimers();
+	});
+
 	it("initializes with temp and precip curves active", () => {
 		const store = createTestStore();
-		const { getByTestId } = render(
+		const { getByTestId, unmount } = render(
 			<Provider store={store}>
 				<WeatherComparisonProvider>
 					<ConsumerComponent />
@@ -49,11 +77,12 @@ describe("WeatherComparisonProvider", () => {
 		);
 
 		expect(getByTestId("activeCurves").props.children).toBe("temp,precip");
+		unmount();
 	});
 
 	it("toggles curves idempotently", () => {
 		const store = createTestStore();
-		const { getByTestId } = render(
+		const { getByTestId, unmount } = render(
 			<Provider store={store}>
 				<WeatherComparisonProvider>
 					<ConsumerComponent />
@@ -83,5 +112,6 @@ describe("WeatherComparisonProvider", () => {
 		expect(getByTestId("activeCurves").props.children).toContain("temp");
 		expect(getByTestId("activeCurves").props.children).toContain("precip");
 		expect(getByTestId("activeCurves").props.children).toContain("wind");
+		unmount();
 	});
 });

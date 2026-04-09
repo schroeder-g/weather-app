@@ -1,4 +1,4 @@
-import { calculateScrubberData } from "../lib/scrubberUtils";
+import { calculateScrubberData } from "./scrubberUtils";
 
 const mockPoints = [
 	{ time: "06:00", temp: 50, precip: 0, wind: 5, uv: 1, aqi: 15 },

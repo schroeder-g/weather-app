@@ -7,7 +7,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import ComparisonPanel from "@/components/comparison-panel";
-import ForecastChart from "@/components/ForecastChart";
+import ForecastChart from "@/components/forecast-chart";
 import ChartConfigPopover from "@/components/forecast-chart/ChartConfigPopover";
 import { FormattedDate } from "@/components/ui/FormattedDate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";

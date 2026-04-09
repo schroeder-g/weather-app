@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Circle, G, Line, Rect, Text as SvgText } from "react-native-svg";
 import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
-import { calculateScrubberData } from "@/lib/scrubberUtils";
+import { calculateScrubberData } from "./scrubberUtils";
 import { baseColors, palette } from "@/themes/config";
 import { useChartContext, useChartScrubberContext } from "./ChartContext";
 import { CURVE_DEFINITIONS } from "./config";

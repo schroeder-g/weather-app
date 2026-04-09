@@ -17,19 +17,7 @@ jest.mock("expo-router", () => ({
 	useSegments: () => ["login"],
 }));
 
-// Mock react-native-reanimated
-jest.mock("react-native-reanimated", () => {
-	const Reanimated = require("react-native-reanimated/mock");
-	Reanimated.default.call = () => {};
-	return {
-		...Reanimated,
-		FadeInUp: {
-			springify: () => ({
-				damping: () => ({ delay: () => ({}) }),
-			}),
-		},
-	};
-});
+
 
 beforeAll(() => server.listen());
 afterEach(() => {
@@ -63,7 +51,7 @@ describe("Auth Integration Test Suite", () => {
 			</Provider>,
 		);
 
-		fireEvent.press(getByText("Log in"));
+		fireEvent.press(getByText("Continue"));
 
 		await waitFor(() => {
 			expect(getByText("Invalid credentials")).toBeTruthy();
@@ -82,7 +70,7 @@ describe("Auth Integration Test Suite", () => {
 			</Provider>,
 		);
 
-		fireEvent.press(getByText("Log in"));
+		fireEvent.press(getByText("Continue"));
 
 		await waitFor(() => {
 			expect(store.getState().identity.isAuthenticated).toBe(true);

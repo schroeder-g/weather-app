@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { useEffect, useRef } from "react";
 import { PanResponder } from "react-native";
-import { calculateScrubberData } from "@/lib/scrubberUtils";
+import { calculateScrubberData } from "./scrubberUtils";
 import { useChartContext, useChartScrubberContext } from "./ChartContext";
 
 export function useChartScrubber() {

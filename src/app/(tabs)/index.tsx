@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 
-import TopBar from "@/components/TopBar";
+import TopBar from "@/components/top-bar";
 import { WeatherEmptyState } from "@/features/weather/components/WeatherEmptyState";
 import { WeatherErrorState } from "@/features/weather/components/WeatherErrorState";
 import { WeatherLoadingState } from "@/features/weather/components/WeatherLoadingState";

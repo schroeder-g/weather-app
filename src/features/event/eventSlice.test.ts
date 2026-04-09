@@ -1,4 +1,4 @@
-import reducer, { setCoordinates, setLocation } from "../eventSlice";
+import reducer, { setCoordinates, setLocation } from "./eventSlice";
 
 describe("eventSlice", () => {
 	const initialState = {
