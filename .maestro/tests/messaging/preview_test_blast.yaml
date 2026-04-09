@@ -1,0 +1,5 @@
+appId: ${APP_ID:-com.anonymous.whether}
+---
+- launchApp
+- tapOn: "Preview Message"
+- assertVisible: "Message Blast"

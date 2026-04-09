@@ -1,0 +1,6 @@
+appId: ${APP_ID:-com.anonymous.whether}
+---
+- launchApp
+- tapOn: "Location" 
+- inputText: "New York"
+- tapOn: "Search"

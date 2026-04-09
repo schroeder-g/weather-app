@@ -9,7 +9,7 @@ import '../global.css';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
-import { Platform } from 'react-native';
+import { Platform, View, Text } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -36,13 +36,17 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    SplashScreen.hideAsync();
+  }, []);
 
   if (!loaded) {
-    return null;
+    return (
+      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
+        <Text className="text-red-500 font-black text-xl tracking-widest uppercase">
+          Whether.io
+        </Text>
+      </View>
+    );
   }
 
   return <RootLayoutNav />;
