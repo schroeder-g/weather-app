@@ -3,12 +3,17 @@ export interface WeatherPoint {
 	temp: number;
 	precip: number;
 	wind: number;
+	uv: number;
+	aqi: number;
 }
 
 export interface ScrubberResult {
 	time: string;
 	temp: number;
 	precip: number;
+	wind: number;
+	uv: number;
+	aqi: number;
 	index: number;
 }
 
@@ -17,7 +22,7 @@ export function calculateScrubberData(
 	continuousIndex: number,
 ): ScrubberResult {
 	if (points.length === 0) {
-		return { time: "00:00", temp: 0, precip: 0, index: 0 };
+		return { time: "00:00", temp: 0, precip: 0, wind: 0, uv: 0, aqi: 0, index: 0 };
 	}
 
 	// 1. Clamp bounds
@@ -40,6 +45,9 @@ export function calculateScrubberData(
 			time: formatTimeWithOffset(p1.time, 0),
 			temp: p1.temp,
 			precip: p1.precip,
+			wind: p1.wind,
+			uv: p1.uv,
+			aqi: p1.aqi,
 			index: snappedIndex,
 		};
 	}
@@ -47,6 +55,9 @@ export function calculateScrubberData(
 	const ratio = snappedIndex - lowerBound;
 	const temp = p1.temp + (p2.temp - p1.temp) * ratio;
 	const precip = p1.precip + (p2.precip - p1.precip) * ratio;
+	const wind = p1.wind + (p2.wind - p1.wind) * ratio;
+	const uv = p1.uv + (p2.uv - p1.uv) * ratio;
+	const aqi = p1.aqi + (p2.aqi - p1.aqi) * ratio;
 
 	// the 5-min offset
 	const minuteOffset = Math.round(ratio * 60);
@@ -55,6 +66,9 @@ export function calculateScrubberData(
 		time: formatTimeWithOffset(p1.time, minuteOffset),
 		temp,
 		precip,
+		wind,
+		uv,
+		aqi,
 		index: snappedIndex,
 	};
 }

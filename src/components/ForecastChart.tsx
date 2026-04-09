@@ -8,7 +8,7 @@ import { ChartProvider } from "./forecast-chart/ChartContext";
 import ChartDataCurves from "./forecast-chart/ChartDataCurves";
 import ChartGrid from "./forecast-chart/ChartGrid";
 import ChartHighlightRegion from "./forecast-chart/ChartHighlightRegion";
-import ChartLegendPopover from "./forecast-chart/ChartLegendPopover";
+import ChartInfoPopover from "./forecast-chart/ChartInfoPopover";
 import ChartScrubberTooltip from "./forecast-chart/ChartScrubberTooltip";
 import ChartXAxis from "./forecast-chart/ChartXAxis";
 import { useChartScrubber } from "./forecast-chart/useChartScrubber";
@@ -59,14 +59,20 @@ export default function ForecastChart({ data }: Props) {
   const windowStartHour = data?.windowStartHour;
   const windowEndHour = data?.windowEndHour;
 
-  const { yMin, yMax, pointsCount, innerWidth, innerHeight } = useMemo(() => {
+  const yMax = useMemo(() => {
+    const maxT = d3.max(displayPoints.map((p) => p.temp)) || 100;
+    const maxW = d3.max(displayPoints.map((p) => p.wind)) || 0;
+    const maxAqi = d3.max(displayPoints.map((p) => p.aqi)) || 0;
+    
+    return Math.max(maxT + 5, maxW + 5, maxAqi + 10, 100);
+  }, [displayPoints]);
+
+  const { yMin, pointsCount, innerWidth, innerHeight } = useMemo(() => {
     const allTemps = displayPoints.map((p) => p.temp);
     const minT = d3.min(allTemps) || 0;
-    const maxT = d3.max(allTemps) || 100;
 
     return {
       yMin: Math.min(minT - 5, 0),
-      yMax: Math.max(maxT + 5, 100),
       pointsCount: displayPoints.length,
       innerWidth: Math.max(0, width - margin.left - margin.right),
       innerHeight: height - margin.top - margin.bottom,
@@ -137,7 +143,7 @@ export default function ForecastChart({ data }: Props) {
               </G>
             </Svg>
             <View className="absolute top-2 right-2 z-50">
-              <ChartLegendPopover />
+              <ChartInfoPopover />
             </View>
           </ChartLayout>
         )}

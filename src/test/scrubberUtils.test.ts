@@ -1,9 +1,9 @@
 import { calculateScrubberData } from "../lib/scrubberUtils";
 
 const mockPoints = [
-  { time: "06:00", temp: 50, precip: 0, wind: 5 },
-  { time: "07:00", temp: 52, precip: 10, wind: 6 },
-  { time: "08:00", temp: 56, precip: 5, wind: 7 },
+  { time: "06:00", temp: 50, precip: 0, wind: 5, uv: 1, aqi: 15 },
+  { time: "07:00", temp: 52, precip: 10, wind: 6, uv: 2, aqi: 20 },
+  { time: "08:00", temp: 56, precip: 5, wind: 7, uv: 3, aqi: 25 },
 ];
 
 describe("scrubberUtils", () => {

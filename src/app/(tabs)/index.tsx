@@ -9,6 +9,8 @@ import Animated, {
 import ComparisonPanel from "@/components/comparison-panel";
 import ForecastChart from "@/components/ForecastChart";
 import TopBar from "@/components/TopBar";
+import ChartConfigPopover from "@/components/forecast-chart/ChartConfigPopover";
+import ChartInfoPopover from "@/components/forecast-chart/ChartInfoPopover";
 import { FormattedDate } from "@/components/ui/FormattedDate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text as UIText } from "@/components/ui/text";
@@ -104,7 +106,7 @@ function WeatherLayout() {
                 </ComparisonPanel.Root>
               </Animated.View>
 
-              <View className="my-1 z-10 flex-row justify-start items-start">
+              <View className="my-1 z-50 flex-row justify-start items-center w-full relative">
                 <Tabs
                   value={selectedWeek}
                   onValueChange={(val) =>
@@ -120,6 +122,9 @@ function WeatherLayout() {
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
+                <View className="flex-row items-center ml-3">
+                  <ChartConfigPopover />
+                </View>
               </View>
 
               <ForecastChart

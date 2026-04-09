@@ -56,4 +56,4 @@ eas build --platform ios --profile preview
 ## Known Limitations & Compromises
 - Real-world UI requires physical screen bounding tests for edge-cases. The chart uses fixed height to guarantee rendering across engines.
 - D3 currently generates smoothed Bezier lines across arbitrary 1-hour ticks. This creates an optical illusion of intermediate minute-weather measurements, which is meant strictly for aesthetics.
-- Ax Integration is deferred. As per requirements, a deterministic ruleset governs copy generation for now (`lib/weatherAnalyzer.ts`), with LLM fallbacks scoped for future iterations.
+- We've mocked authentication with msw to demonstrate the UI without overengineering the prototype

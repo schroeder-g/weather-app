@@ -9,6 +9,7 @@ import {
 } from "@/lib/weatherAnalyzer";
 import { useGetForecastQuery } from "@/store/api";
 import type { AppDispatch, RootState } from "@/store/store";
+import type { DataCurveType } from "@/components/forecast-chart/config";
 
 export interface WeatherComparisonState {
 	location: string;
@@ -21,10 +22,12 @@ export interface WeatherComparisonState {
 	isAnalyzing: boolean;
 	selectedWeek: "this" | "next";
 	isReady: boolean;
+	activeCurves: DataCurveType[];
 }
 
 export interface WeatherComparisonActions {
 	setSelectedWeek: (week: "this" | "next") => void;
+	toggleCurve: (curve: DataCurveType) => void;
 }
 
 export interface WeatherComparisonContextValue {
@@ -56,6 +59,18 @@ export function WeatherComparisonProvider({
 	);
 
 	const [selectedWeek, setSelectedWeek] = useState<"this" | "next">("this");
+	const [activeCurves, setActiveCurves] = useState<DataCurveType[]>([
+		"temp",
+		"precip",
+	]);
+
+	const toggleCurve = (curve: DataCurveType) => {
+		setActiveCurves((prev) =>
+			prev.includes(curve)
+				? prev.filter((c) => c !== curve)
+				: [...prev, curve],
+		);
+	};
 
 	useEffect(() => {
 		dispatch(fetchInitialLocation());
@@ -161,9 +176,11 @@ export function WeatherComparisonProvider({
 			nextWeekDate,
 			selectedWeek,
 			isReady,
+			activeCurves,
 		},
 		actions: {
 			setSelectedWeek,
+			toggleCurve,
 		},
 	};
 

@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 	try {
 		const targetUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(
 			location,
-		)}/next15days?unitGroup=us&include=hours,days&key=${apiKey}&contentType=json`;
+		)}/next15days?unitGroup=us&elements=%2Baqius&include=hours,days&key=${apiKey}&contentType=json`;
 
 		const response = await fetch(targetUrl);
 

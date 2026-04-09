@@ -9,42 +9,41 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { G, Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import { palette } from "@/themes/config";
 import { useChartContext } from "./ChartContext";
+import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
+import { CURVE_DEFINITIONS } from "./config";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 const ChartDataCurves = memo(() => {
 	const { displayPoints, xScale, yScale, innerHeight } = useChartContext();
+	const { state } = useWeatherComparisonContext();
+	const { activeCurves } = state;
 
-	const { tempPath, precipPath } = useMemo(() => {
-		const tempLineGen = d3
-			.line<any>()
-			.x((d, i) => xScale(i))
-			.y((d) => yScale(d.temp))
-			.curve(d3.curveMonotoneX);
+	const curvePaths = useMemo(() => {
+		return (activeCurves || []).map((curveType) => {
+			const config = CURVE_DEFINITIONS[curveType];
+			const lineGen = d3
+				.line<any>()
+				.x((d, i) => xScale(i))
+				.y((d) => yScale(config.getValue(d)))
+				.curve(d3.curveMonotoneX);
 
-		const precipLineGen = d3
-			.line<any>()
-			.x((d, i) => xScale(i))
-			.y((d) => yScale(d.precip))
-			.curve(d3.curveMonotoneX);
-
-		return {
-			tempPath: tempLineGen(displayPoints) as string | null,
-			precipPath: precipLineGen(displayPoints) as string | null,
-		};
-	}, [displayPoints, xScale, yScale]);
+			return {
+				type: curveType,
+				path: lineGen(displayPoints) as string | null,
+				config,
+			};
+		}).filter((c) => c.path !== null);
+	}, [displayPoints, xScale, yScale, activeCurves]);
 
 	const progress = useSharedValue(0);
 
 	useEffect(() => {
-		if (!tempPath || !precipPath) return;
+		if (curvePaths.length === 0) return;
 
 		cancelAnimation(progress);
 
-		// Explicit sequence ensures Reanimated commits the 0 start point to the UI thread
-		// before computing the transition up to 1, preventing the animation from being skipped.
 		progress.value = withSequence(
 			withTiming(0, { duration: 0 }),
 			withTiming(1, {
@@ -52,7 +51,7 @@ const ChartDataCurves = memo(() => {
 				easing: Easing.out(Easing.cubic),
 			}),
 		);
-	}, [tempPath, precipPath, progress]);
+	}, [curvePaths, progress]); // Including curvePaths will re-trigger animation on toggles, which looks cool!
 
 	const animatedProps = useAnimatedProps(() => {
 		return {
@@ -67,49 +66,35 @@ const ChartDataCurves = memo(() => {
 	return (
 		<G>
 			<Defs>
-				<LinearGradient
-					id="tempGradient"
-					x1="0"
-					y1="0"
-					x2="0"
-					y2={innerHeight}
-					gradientUnits="userSpaceOnUse"
-				>
-					<Stop offset="0" stopColor={palette.orange[500]} />
-					<Stop offset="1" stopColor={palette.orange[500]} stopOpacity={0.2} />
-				</LinearGradient>
-				<LinearGradient
-					id="precipGradient"
-					x1="0"
-					y1="0"
-					x2="0"
-					y2={innerHeight}
-					gradientUnits="userSpaceOnUse"
-				>
-					<Stop offset="0" stopColor={palette.blue[500]} />
-					<Stop offset="1" stopColor={palette.blue[500]} stopOpacity={0.2} />
-				</LinearGradient>
+				{(activeCurves || []).map((curveType) => {
+					const config = CURVE_DEFINITIONS[curveType];
+					return (
+						<LinearGradient
+							key={`grad-${curveType}`}
+							id={`${curveType}Gradient`}
+							x1="0"
+							y1="0"
+							x2="0"
+							y2={innerHeight}
+							gradientUnits="userSpaceOnUse"
+						>
+							<Stop offset="0" stopColor={config.color} />
+							<Stop offset="1" stopColor={config.color} stopOpacity={0.2} />
+						</LinearGradient>
+					);
+				})}
 			</Defs>
-			{tempPath && (
+			{curvePaths.map(({ type, path }) => (
 				<AnimatedPath
-					d={tempPath}
+					key={`path-${type}`}
+					d={path!}
 					animatedProps={animatedProps}
 					fill="none"
-					stroke="url(#tempGradient)"
+					stroke={`url(#${type}Gradient)`}
 					strokeWidth={3}
 					vectorEffect="non-scaling-stroke"
 				/>
-			)}
-			{precipPath && (
-				<AnimatedPath
-					d={precipPath}
-					animatedProps={animatedProps}
-					fill="none"
-					stroke="url(#precipGradient)"
-					strokeWidth={3}
-					vectorEffect="non-scaling-stroke"
-				/>
-			)}
+			))}
 		</G>
 	);
 });

@@ -3,6 +3,8 @@ import { Circle, G, Line, Rect, Text as SvgText } from "react-native-svg";
 import { calculateScrubberData } from "@/lib/scrubberUtils";
 import { baseColors, palette } from "@/themes/config";
 import { useChartContext, useChartScrubberContext } from "./ChartContext";
+import { useWeatherComparisonContext } from "@/features/weather/WeatherComparisonProvider";
+import { CURVE_DEFINITIONS } from "./config";
 
 const formatScrubTime = (timeStr: string) => {
 	if (!timeStr) return "";
@@ -15,7 +17,9 @@ const formatScrubTime = (timeStr: string) => {
 
 const ChartScrubberTooltip = memo(() => {
 	const { scrubberIndex } = useChartScrubberContext();
-	const { displayPoints, xScale, yScale, innerHeight } = useChartContext();
+	const { displayPoints, xScale, yScale, innerWidth, innerHeight } = useChartContext();
+	const { state } = useWeatherComparisonContext();
+	const activeCurves = state.activeCurves || [];
 
 	if (scrubberIndex === null) return null;
 
@@ -27,8 +31,24 @@ const ChartScrubberTooltip = memo(() => {
 	if (!scrubResult) return null;
 
 	const x = xScale(scrubResult.index);
-	const tempY = yScale(scrubResult.temp);
-	const precipY = yScale(scrubResult.precip);
+
+	const getValStr = (curve: string, val: number) => {
+		if (curve === "temp") return `${Math.round(val)}°F`;
+		if (curve === "precip") return `${Math.round(val)}%`;
+		if (curve === "wind") return `${Math.round(val)}mph`;
+		if (curve === "uv") return `UV ${Math.round(val)}`;
+		if (curve === "aqi") return `AQI ${Math.round(val)}`;
+		return `${Math.round(val)}`;
+	};
+
+	const tooltipText = activeCurves
+		.map((c) => getValStr(c, (scrubResult as any)[c]))
+		.join(" | ");
+
+	const estimatedWidth = Math.max(90, tooltipText.length * 6.5 + 32);
+	const rectX = x - estimatedWidth / 2;
+	const clampedRectX = Math.max(0, Math.min(rectX, innerWidth - estimatedWidth));
+	const textX = clampedRectX + estimatedWidth / 2;
 
 	return (
 		<G>
@@ -41,33 +61,36 @@ const ChartScrubberTooltip = memo(() => {
 				strokeWidth={1.5}
 				strokeDasharray="6,6"
 			/>
-			<Circle
-				cx={x}
-				cy={tempY}
-				r={5}
-				fill={baseColors.orange}
-				stroke="white"
-				strokeWidth={2}
-			/>
-			<Circle
-				cx={x}
-				cy={precipY}
-				r={5}
-				fill={baseColors.blue}
-				stroke="white"
-				strokeWidth={2}
-			/>
+			
+			{activeCurves.map((curveType) => {
+				const config = CURVE_DEFINITIONS[curveType as keyof typeof CURVE_DEFINITIONS];
+				const val = (scrubResult as any)[curveType];
+				if (val === undefined) return null;
+				const cy = yScale(val);
+
+				return (
+					<Circle
+						key={curveType}
+						cx={x}
+						cy={cy}
+						r={5}
+						fill={config.color}
+						stroke="white"
+						strokeWidth={2}
+					/>
+				);
+			})}
 
 			<Rect
-				x={x - 45}
+				x={clampedRectX}
 				y={-20}
-				width={90}
+				width={estimatedWidth}
 				height={40}
 				rx={6}
 				fill={palette.zinc[800]}
 			/>
 			<SvgText
-				x={x}
+				x={textX}
 				y={-5}
 				fill="white"
 				fontSize="12"
@@ -77,13 +100,13 @@ const ChartScrubberTooltip = memo(() => {
 				{formatScrubTime(scrubResult.time)}
 			</SvgText>
 			<SvgText
-				x={x}
+				x={textX}
 				y={14}
 				fill={palette.zinc[300]}
 				fontSize="10"
 				textAnchor="middle"
 			>
-				{`${Math.round(scrubResult.temp)}°F | ${Math.round(scrubResult.precip)}%`}
+				{tooltipText}
 			</SvgText>
 		</G>
 	);

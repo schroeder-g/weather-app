@@ -7,6 +7,7 @@ export interface HourlyData {
   precipprob: number;
   windspeed: number;
   uvindex?: number;
+  aqius?: number;
   cloudcover?: number;
   severerisk?: number;
   icon?: string;
@@ -34,6 +35,8 @@ export interface ProcessedPoint {
   temp: number;
   precip: number;
   wind: number;
+  uv: number;
+  aqi: number;
 }
 
 export interface WeatherSummary extends WindowMetrics {
@@ -70,7 +73,7 @@ export async function analyzeWeatherWindow(
       maxSevereRisk: 0,
       avgCloudCover: 0,
       recommendation: "Mixed",
-      message: "No data available",
+      message: (async function* () { yield "No data available"; })(),
       points: [],
       allPoints: [],
       windowStartHour: startHour,
@@ -94,7 +97,7 @@ export async function analyzeWeatherWindow(
       maxSevereRisk: 0,
       avgCloudCover: 0,
       recommendation: "Mixed",
-      message: "No data for time slot",
+      message: (async function* () { yield "No data for time slot"; })(),
       points: [],
       allPoints: [],
       windowStartHour: startHour,
@@ -129,6 +132,8 @@ export async function analyzeWeatherWindow(
     temp: h.temp,
     precip: h.precipprob,
     wind: h.windspeed,
+    uv: h.uvindex || 0,
+    aqi: h.aqius || 0,
   }));
 
   const metrics: WindowMetrics = {
@@ -149,6 +154,8 @@ export async function analyzeWeatherWindow(
     temp: h.temp,
     precip: h.precipprob,
     wind: h.windspeed,
+    uv: h.uvindex || 0,
+    aqi: h.aqius || 0,
   }));
 
   return {

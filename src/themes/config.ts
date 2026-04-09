@@ -14,6 +14,7 @@ export const chromaticColors = {
 	green: colors.green[500],
 	cyan: colors.cyan[500],
 	blue: colors.blue[500],
+	purple: colors.purple[500],
 	magenta: colors.fuchsia[500],
 } as const;
 
@@ -25,6 +26,7 @@ export const palette = {
 	green: colors.green,
 	cyan: colors.cyan,
 	blue: colors.blue,
+	purple: colors.purple,
 	magenta: colors.fuchsia,
 } as Record<string, Record<string | number, string>>;
 
