@@ -23,10 +23,10 @@ const mockSummary = {
 // Mock the react-native hook for window dimension consistency
 jest.mock("react-native", () => {
 	const RN = jest.requireActual("react-native");
-	return {
-		...RN,
-		useWindowDimensions: () => ({ width: 400, height: 800 }),
-	};
+	return Object.setPrototypeOf(
+		{ useWindowDimensions: () => ({ width: 400, height: 800 }) },
+		RN
+	);
 });
 
 describe("ForecastChart Interaction", () => {

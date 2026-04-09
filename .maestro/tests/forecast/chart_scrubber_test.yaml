@@ -1,0 +1,10 @@
+appId: ${APP_ID:-com.anonymous.whether}
+---
+- launchApp
+- assertVisible:
+    id: "forecast-chart-container"
+- assertNotVisible: ".*%.*" # Verify tooltip is hidden initially
+- swipe:
+    fromId: "chart-touch-surface"
+    direction: "RIGHT"
+- assertVisible: ".*%.*" # Verify tooltip (temp/precip) appears after scrub
