@@ -7,10 +7,9 @@ import Animated, {
 } from "react-native-reanimated";
 
 import ComparisonPanel from "@/components/comparison-panel";
+import ChartConfigPopover from "@/components/forecast-chart/ChartConfigPopover";
 import ForecastChart from "@/components/ForecastChart";
 import TopBar from "@/components/TopBar";
-import ChartConfigPopover from "@/components/forecast-chart/ChartConfigPopover";
-import ChartInfoPopover from "@/components/forecast-chart/ChartInfoPopover";
 import { FormattedDate } from "@/components/ui/FormattedDate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text as UIText } from "@/components/ui/text";
@@ -82,28 +81,26 @@ function WeatherLayout() {
           nextWeekResult &&
           thisWeekDate &&
           nextWeekDate && (
-            <Animated.View
-              entering={FadeIn.duration(400)}
-              exiting={FadeOut}
-              layout={LinearTransition.springify()}
+            <ComparisonPanel.Root
+              summary={
+                selectedWeek === "this" ? thisWeekResult : nextWeekResult
+              }
             >
+              <Animated.View
+                entering={FadeIn.duration(400)}
+                exiting={FadeOut}
+                layout={LinearTransition.springify()}
+              >
               <Animated.View
                 layout={LinearTransition.springify()}
                 className="my-1"
               >
-                <ComparisonPanel.Root
-                  summary={
-                    selectedWeek === "this" ? thisWeekResult : nextWeekResult
-                  }
-                >
-                  <ComparisonPanel.Header
-                    title={selectedWeek === "this" ? "This Week" : "Next Week"}
-                    date={selectedWeek === "this" ? thisWeekDate : nextWeekDate}
-                  />
-                  <ComparisonPanel.Metrics />
-                  <ComparisonPanel.Recommendation />
-                  <ComparisonPanel.Summary />
-                </ComparisonPanel.Root>
+                <ComparisonPanel.Header
+                  title={selectedWeek === "this" ? "This Week" : "Next Week"}
+                  date={selectedWeek === "this" ? thisWeekDate : nextWeekDate}
+                />
+                <ComparisonPanel.Metrics />
+                <ComparisonPanel.Recommendation />
               </Animated.View>
 
               <View className="my-1 z-50 flex-row justify-start items-center w-full relative">
@@ -140,8 +137,15 @@ function WeatherLayout() {
                   />
                 </Text>
               </View>
+
+              <Animated.View
+                layout={LinearTransition.springify()}
+              >
+                <ComparisonPanel.Summary />
+              </Animated.View>
             </Animated.View>
-          )}
+          </ComparisonPanel.Root>
+        )}
       </ScrollView>
     </View>
   );
