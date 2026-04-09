@@ -13,10 +13,20 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import "../global.css";
-
+import { Provider } from "react-redux";
+import { store } from "@/store/store";
+import { AuthGuard } from "@/components/AuthGuard";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PortalHost } from "@rn-primitives/portal";
 import { Platform, Text, View } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
+
+
+if (__DEV__) {
+	const { nativeServer } = require("@/mocks/native");
+	nativeServer.listen();
+}
+
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -63,20 +73,22 @@ export default function RootLayout() {
 	return <RootLayoutNav />;
 }
 
-import { Provider } from "react-redux";
-import { store } from "@/store/store";
-
 function RootLayoutNav() {
 	const colorScheme = useColorScheme();
 
 	return (
-		<Provider store={store}>
-			<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-				<Stack>
-					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-				</Stack>
-				{Platform.OS !== "web" && <PortalHost />}
-			</ThemeProvider>
-		</Provider>
+		<GestureHandlerRootView style={{ flex: 1 }}>
+			<Provider store={store}>
+				<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+					<AuthGuard>
+						<Stack>
+							<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+							<Stack.Screen name="login" options={{ headerShown: false, animation: 'fade' }} />
+						</Stack>
+					</AuthGuard>
+					{Platform.OS !== "web" && <PortalHost />}
+				</ThemeProvider>
+			</Provider>
+		</GestureHandlerRootView>
 	);
 }

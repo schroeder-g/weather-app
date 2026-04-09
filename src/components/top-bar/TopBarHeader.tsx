@@ -10,9 +10,11 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { HelpDialog } from "./HelpDialog";
+import { LogoutDialog } from "./LogoutDialog";
 
 export function TopBarHeader() {
 	const [isHelpOpen, setIsHelpOpen] = useState(false);
+	const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 	const insets = useSafeAreaInsets();
 
 	const contentInsets = {
@@ -39,13 +41,14 @@ export function TopBarHeader() {
 						<DropdownMenuItem onPress={() => setIsHelpOpen(true)}>
 							<Text className="text-foreground">Help</Text>
 						</DropdownMenuItem>
-						<DropdownMenuItem variant="destructive">
+						<DropdownMenuItem variant="destructive" onPress={() => setIsLogoutOpen(true)}>
 							<Text className="text-destructive">Log out</Text>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</View>
 			<HelpDialog open={isHelpOpen} onOpenChange={setIsHelpOpen} />
+			<LogoutDialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen} />
 		</>
 	);
 }

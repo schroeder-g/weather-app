@@ -10,6 +10,7 @@ import ComparisonPanel from "@/components/comparison-panel";
 import ForecastChart from "@/components/ForecastChart";
 import ChartLegendPopover from "@/components/forecast-chart/ChartLegendPopover";
 import TopBar from "@/components/TopBar";
+import { FormattedDate } from "@/components/ui/FormattedDate";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Text as UIText } from "@/components/ui/text";
 import {
@@ -128,19 +129,12 @@ function WeatherLayout() {
 
 							<View className="flex-row items-center justify-center gap-2 mt-4 mb-8 z-50">
 								<Text className="text-2xl font-bold text-foreground">
-									{selectedWeek === "this"
-										? thisWeekDate.toLocaleDateString("en-US", {
-												weekday: "long",
-												month: "long",
-												day: "numeric",
-											})
-										: nextWeekDate.toLocaleDateString("en-US", {
-												weekday: "long",
-												month: "long",
-												day: "numeric",
-											})}
+									{selectedWeek === "this" ? "This " : "Next "}
+									<FormattedDate
+										date={selectedWeek === "this" ? thisWeekDate : nextWeekDate}
+										ordinalClassName="text-[14px] leading-5"
+									/>
 								</Text>
-								<ChartLegendPopover />
 							</View>
 						</Animated.View>
 					)}
