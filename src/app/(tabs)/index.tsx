@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ComparisonPanel from "@/components/ComparisonPanel";
 import ForecastChart from "@/components/ForecastChart";
 import MessageBlast from "@/components/MessageBlast";
@@ -8,12 +8,18 @@ import TopBar from "@/components/TopBar";
 import { getSlotBounds, getUpcomingDates } from "@/lib/dateUtils";
 import { analyzeWeatherWindow } from "@/lib/weatherAnalyzer";
 import { useGetForecastQuery } from "@/store/api";
-import type { RootState } from "@/store/store";
+import type { RootState, AppDispatch } from "@/store/store";
+import { fetchInitialLocation } from "@/features/event/eventSlice";
 
 export default function TabOneScreen() {
+	const dispatch = useDispatch<AppDispatch>();
 	const { location, dayOfWeek, timeSlot } = useSelector(
 		(state: RootState) => state.event,
 	);
+
+	useEffect(() => {
+		dispatch(fetchInitialLocation());
+	}, [dispatch]);
 
 	// RTK Query fetches
 	const { data, error, isFetching } = useGetForecastQuery(location, {
