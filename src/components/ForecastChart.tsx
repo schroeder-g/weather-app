@@ -1,17 +1,40 @@
+import {
+  calculateScrubberData,
+  type ScrubberResult,
+} from "@/lib/scrubberUtils";
 import type { WeatherSummary } from "@/lib/weatherAnalyzer";
+import { baseColors, palette } from "@/themes/config";
 import * as d3 from "d3";
-import React, { useState } from "react";
-import { Text, View } from "react-native";
-import Svg, { G, Line, Path, Text as SvgText } from "react-native-svg";
+import * as Haptics from "expo-haptics";
+import React, { useEffect, useRef, useState } from "react";
+import { PanResponder, Text, useWindowDimensions, View } from "react-native";
+import Svg, {
+  Circle,
+  G,
+  Line,
+  Path,
+  Rect,
+  Text as SvgText,
+} from "react-native-svg";
 
 interface Props {
   data: WeatherSummary;
 }
 
 export default function ForecastChart({ data }: Props) {
+  const { height: screenHeight, width: screenWidth } = useWindowDimensions();
   const [width, setWidth] = useState(0);
-  const height = 200;
-  const margin = { top: 20, right: 20, bottom: 30, left: 30 };
+  const [scrubberIndex, setScrubberIndex] = useState<number | null>(null);
+  const lastHapticIndex = useRef<number | null>(null);
+  const initialTouchX = useRef<number>(0);
+
+  // Use 50% of screen height for mobile screens (width < 768px), else a max sensible height
+  const isMobile = screenWidth < 768;
+  const height = isMobile
+    ? screenHeight * 0.5
+    : Math.min(screenHeight * 0.5, 400);
+
+  const margin = { top: 40, right: 20, bottom: 30, left: 30 };
 
   const onLayout = (event: any) => {
     setWidth(event.nativeEvent.layout.width);
@@ -21,7 +44,8 @@ export default function ForecastChart({ data }: Props) {
     return (
       <View
         onLayout={onLayout}
-        className="h-[200px] flex items-center justify-center bg-gray-50 rounded-xl"
+        style={{ height }}
+        className="flex items-center justify-center bg-card rounded-xl"
       >
         <Text>No data</Text>
       </View>
@@ -73,6 +97,65 @@ export default function ForecastChart({ data }: Props) {
   const tempPath = tempLineGen(displayPoints) as string;
   const precipPath = precipLineGen(displayPoints) as string;
 
+  const stateRef = useRef({ innerWidth, pointsCount, displayPoints, margin });
+  useEffect(() => {
+    stateRef.current = { innerWidth, pointsCount, displayPoints, margin };
+  });
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: (evt) => {
+        initialTouchX.current = evt.nativeEvent.locationX;
+        handleScrub(initialTouchX.current);
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        handleScrub(initialTouchX.current + gestureState.dx);
+      },
+      onPanResponderRelease: () => {
+        setScrubberIndex(null);
+        lastHapticIndex.current = null;
+      },
+      onPanResponderTerminate: () => {
+        setScrubberIndex(null);
+        lastHapticIndex.current = null;
+      },
+    }),
+  ).current;
+
+  const handleScrub = (x: number) => {
+    const latest = stateRef.current;
+    if (latest.innerWidth === 0) return;
+    const contentX = x - latest.margin.left;
+    const continuousIndex =
+      (contentX / latest.innerWidth) * (latest.pointsCount - 1);
+    const result = calculateScrubberData(
+      latest.displayPoints as any,
+      continuousIndex,
+    );
+
+    setScrubberIndex(result.index);
+    if (lastHapticIndex.current !== result.index) {
+      lastHapticIndex.current = result.index;
+      Haptics.selectionAsync().catch(() => {});
+    }
+  };
+
+  let scrubResult: ScrubberResult | null = null;
+  if (scrubberIndex !== null) {
+    scrubResult = calculateScrubberData(displayPoints as any, scrubberIndex);
+  }
+
+  const formatScrubTime = (timeStr: string) => {
+    if (!timeStr) return "";
+    let [h, m] = timeStr.split(":").map(Number);
+    const suffix = h >= 12 ? "pm" : "am";
+    let hour12 = h % 12;
+    if (hour12 === 0) hour12 = 12;
+    return `${hour12}:${m.toString().padStart(2, "0")} ${suffix}`;
+  };
+
   // Find pixel X coords for window bounds
   let startX = 0;
   let endX = innerWidth;
@@ -87,123 +170,178 @@ export default function ForecastChart({ data }: Props) {
   if (endIndex >= 0) endX = xScale(endIndex);
 
   return (
-    <View className="my-4" onLayout={onLayout}>
-      <View className="flex-row gap-4 mb-4 justify-center">
-        <View className="flex-row items-center gap-1">
-          <View className="w-3 h-3 rounded-full bg-orange-500" />
-          <Text className="text-gray-600 text-sm">Temperature</Text>
-        </View>
-        <View className="flex-row items-center gap-1">
-          <View className="w-3 h-3 rounded-full bg-blue-500" />
-          <Text className="text-gray-600 text-sm">Precipitation</Text>
-        </View>
-      </View>
-
+    <View
+      className="my-4"
+      onLayout={onLayout}
+      testID="forecast-chart-container"
+    >
       {width > 0 && innerWidth > 0 && (
-        <Svg width={width} height={height}>
-          <G x={margin.left} y={margin.top}>
-            {/* Background Highlight for slot */}
-            {startIndex >= 0 && endIndex >= 0 && (
-              <Path
-                d={`M ${startX} 0 L ${endX} 0 L ${endX} ${innerHeight} L ${startX} ${innerHeight} Z`}
-                fill="#f3f4f6"
-              />
-            )}
-
-            {/* Grid Lines */}
-            {yScale.ticks(4).map((tick, i) => (
-              <G key={`y-${tick}`}>
-                <Line
-                  x1={0}
-                  x2={innerWidth}
-                  y1={yScale(tick)}
-                  y2={yScale(tick)}
-                  stroke="#e5e7eb"
-                  strokeDasharray="4,4"
+        <View {...panResponder.panHandlers} testID="chart-touch-surface">
+          <Svg width={width} height={height} pointerEvents="none">
+            <G x={margin.left} y={margin.top}>
+              {/* Background Highlight for slot */}
+              {startIndex >= 0 && endIndex >= 0 && (
+                <Path
+                  d={`M ${startX} 0 L ${endX} 0 L ${endX} ${innerHeight} L ${startX} ${innerHeight} Z`}
+                  fill={palette.zinc[100]}
                 />
-                <SvgText
-                  x={-5}
-                  y={yScale(tick) + 4}
-                  fontSize="10"
-                  fill="#6b7280"
-                  textAnchor="end"
-                >
-                  {tick}
-                </SvgText>
-              </G>
-            ))}
+              )}
 
-            {/* Highlight window boundaries */}
-            {startIndex >= 0 && (
-              <Line
-                x1={startX}
-                x2={startX}
-                y1={0}
-                y2={innerHeight}
-                stroke="#9ca3af"
-                strokeWidth={2}
-                strokeDasharray="4,4"
-              />
-            )}
-            {endIndex >= 0 && (
-              <Line
-                x1={endX}
-                x2={endX}
-                y1={0}
-                y2={innerHeight}
-                stroke="#9ca3af"
-                strokeWidth={2}
-                strokeDasharray="4,4"
-              />
-            )}
+              {/* Grid Lines */}
+              {yScale.ticks(4).map((tick, i) => (
+                <G key={`y-${tick}`}>
+                  <Line
+                    x1={0}
+                    x2={innerWidth}
+                    y1={yScale(tick)}
+                    y2={yScale(tick)}
+                    stroke={palette.zinc[200]}
+                    strokeWidth={1}
+                    strokeDasharray="2,4"
+                  />
+                  <SvgText
+                    x={-5}
+                    y={yScale(tick) + 4}
+                    fontSize="10"
+                    fill={palette.zinc[400]}
+                    textAnchor="end"
+                  >
+                    {tick}
+                  </SvgText>
+                </G>
+              ))}
 
-            {/* Time labels */}
-            {displayPoints.map((p, i) => {
-              const hour = parseInt(p.time.split(":")[0], 10);
-              const isSelected =
-                hour >= windowStartHour && hour <= windowEndHour;
+              {/* Highlight window boundaries */}
+              {startIndex >= 0 && (
+                <Line
+                  x1={startX}
+                  x2={startX}
+                  y1={0}
+                  y2={innerHeight}
+                  stroke={palette.zinc[300]}
+                  strokeWidth={1.5}
+                  strokeDasharray="6,6"
+                />
+              )}
+              {endIndex >= 0 && (
+                <Line
+                  x1={endX}
+                  x2={endX}
+                  y1={0}
+                  y2={innerHeight}
+                  stroke={palette.zinc[300]}
+                  strokeWidth={1.5}
+                  strokeDasharray="6,6"
+                />
+              )}
 
-              // Only show even hours to prevent crowding
-              if (hour % 2 !== 0 && !isSelected) return null;
+              {/* Time labels */}
+              {displayPoints.map((p, i) => {
+                const hour = parseInt(p.time.split(":")[0], 10);
+                const isSelected =
+                  hour >= windowStartHour && hour <= windowEndHour;
 
-              return (
-                <SvgText
-                  key={`time-${i}`}
-                  x={xScale(i)}
-                  y={innerHeight + 20}
-                  fontSize="10"
-                  fill={isSelected ? "#1f2937" : "#6b7280"}
-                  fontWeight={isSelected ? "bold" : "normal"}
-                  textAnchor="middle"
-                >
-                  {hour > 12
-                    ? `${hour - 12}p`
-                    : hour === 12
-                      ? "12p"
-                      : `${hour}a`}
-                </SvgText>
-              );
-            })}
+                // Only show even hours to prevent crowding
+                if (hour % 2 !== 0) return null;
 
-            {/* Curves */}
-            {tempPath && (
-              <Path
-                d={tempPath}
-                fill="none"
-                stroke="#f97316" // Orange 500
-                strokeWidth={3}
-              />
-            )}
-            {precipPath && (
-              <Path
-                d={precipPath}
-                fill="none"
-                stroke="#3b82f6" // Blue 500
-                strokeWidth={3}
-              />
-            )}
-          </G>
-        </Svg>
+                return (
+                  <SvgText
+                    key={`time-${i}`}
+                    x={xScale(i)}
+                    y={innerHeight + 20}
+                    fontSize="10"
+                    fill={isSelected ? palette.zinc[700] : palette.zinc[400]}
+                    fontWeight={isSelected ? "bold" : "normal"}
+                    textAnchor="middle"
+                  >
+                    {hour > 12
+                      ? `${hour - 12}p`
+                      : hour === 12
+                        ? "12p"
+                        : `${hour}a`}
+                  </SvgText>
+                );
+              })}
+
+              {/* Curves */}
+              {tempPath && (
+                <Path
+                  d={tempPath}
+                  fill="none"
+                  stroke={baseColors.orange}
+                  strokeWidth={3}
+                />
+              )}
+              {precipPath && (
+                <Path
+                  d={precipPath}
+                  fill="none"
+                  stroke={baseColors.blue}
+                  strokeWidth={3}
+                />
+              )}
+
+              {/* Scrubber Tooltip */}
+              {scrubResult && (
+                <G>
+                  <Line
+                    x1={xScale(scrubResult.index)}
+                    x2={xScale(scrubResult.index)}
+                    y1={0}
+                    y2={innerHeight}
+                    stroke={palette.zinc[300]}
+                    strokeWidth={1.5}
+                    strokeDasharray="6,6"
+                  />
+                  <Circle
+                    cx={xScale(scrubResult.index)}
+                    cy={yScale(scrubResult.temp)}
+                    r={5}
+                    fill={baseColors.orange}
+                    stroke="white"
+                    strokeWidth={2}
+                  />
+                  <Circle
+                    cx={xScale(scrubResult.index)}
+                    cy={yScale(scrubResult.precip)}
+                    r={5}
+                    fill={baseColors.blue}
+                    stroke="white"
+                    strokeWidth={2}
+                  />
+
+                  <Rect
+                    x={xScale(scrubResult.index) - 45}
+                    y={innerHeight - 50}
+                    width={90}
+                    height={40}
+                    rx={6}
+                    fill={palette.zinc[800]}
+                  />
+                  <SvgText
+                    x={xScale(scrubResult.index)}
+                    y={innerHeight - 35}
+                    fill="white"
+                    fontSize="12"
+                    textAnchor="middle"
+                    fontWeight="bold"
+                  >
+                    {formatScrubTime(scrubResult.time)}
+                  </SvgText>
+                  <SvgText
+                    x={xScale(scrubResult.index)}
+                    y={innerHeight - 16}
+                    fill={palette.zinc[300]}
+                    fontSize="10"
+                    textAnchor="middle"
+                  >
+                    {`${Math.round(scrubResult.temp)}°F | ${Math.round(scrubResult.precip)}%`}
+                  </SvgText>
+                </G>
+              )}
+            </G>
+          </Svg>
+        </View>
       )}
     </View>
   );
