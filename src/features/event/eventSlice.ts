@@ -57,13 +57,18 @@ export const fetchInitialLocation = createAsyncThunk(
 				);
 			}
 
-			const geocode = await withTimeout(
-				Location.reverseGeocodeAsync({
-					latitude: location.coords.latitude,
-					longitude: location.coords.longitude,
-				}),
-				5000, // 5s timeout
-			);
+			let geocode;
+			try {
+				geocode = await withTimeout(
+					Location.reverseGeocodeAsync({
+						latitude: location.coords.latitude,
+						longitude: location.coords.longitude,
+					}),
+					5000, // 5s timeout
+				);
+			} catch (e) {
+				geocode = null;
+			}
 
 			if (geocode && geocode.length > 0) {
 				const place = geocode[0];
@@ -87,6 +92,28 @@ export const fetchInitialLocation = createAsyncThunk(
 					};
 				}
 			}
+			
+			// Fallback: Web reverse geocode if expo-location fails or returns empty
+			try {
+				const res = await fetch(
+					`/api/location/reverse-geocode?lat=${location.coords.latitude}&lng=${location.coords.longitude}`
+				);
+				if (res.ok) {
+					const data = await res.json();
+					if (data && data.locationName) {
+						return {
+							name: data.locationName,
+							coordinates: {
+								latitude: location.coords.latitude,
+								longitude: location.coords.longitude,
+							},
+						};
+					}
+				}
+			} catch (fallbackError) {
+				console.warn("Fallback reverse geocode failed", fallbackError);
+			}
+
 			return rejectWithValue("Could not determine location name");
 		} catch (error) {
 			return rejectWithValue((error as Error).message);
