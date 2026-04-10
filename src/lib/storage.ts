@@ -1,81 +1,54 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 
 const memoryStore = new Map<string, string>();
-let useMemoryFallback = false;
 
 export const storage = {
 	async setItem(key: string, value: string) {
-		if (useMemoryFallback) {
+		if (Platform.OS === "web") {
+			// Disable persistent storage on web to enforce cookie constraints
 			memoryStore.set(key, value);
 			return;
 		}
 		try {
-			await AsyncStorage.setItem(key, value);
+			await SecureStore.setItemAsync(key, value);
 		} catch (e: any) {
-			if (
-				e?.message?.includes("Native module is null") ||
-				e?.message?.includes("legacy storage")
-			) {
-				useMemoryFallback = true;
-				memoryStore.set(key, value);
-			} else {
-				throw e;
-			}
+			console.warn("SecureStore failed, falling back to memory.", e);
+			memoryStore.set(key, value);
 		}
 	},
 	async getItem(key: string) {
-		if (useMemoryFallback) {
+		if (Platform.OS === "web") {
 			return memoryStore.get(key) || null;
 		}
 		try {
-			return await AsyncStorage.getItem(key);
+			return await SecureStore.getItemAsync(key);
 		} catch (e: any) {
-			if (
-				e?.message?.includes("Native module is null") ||
-				e?.message?.includes("legacy storage")
-			) {
-				useMemoryFallback = true;
-				return memoryStore.get(key) || null;
-			}
-			throw e;
+			return memoryStore.get(key) || null;
 		}
 	},
 	async removeItem(key: string) {
-		if (useMemoryFallback) {
+		if (Platform.OS === "web") {
 			memoryStore.delete(key);
 			return;
 		}
 		try {
-			await AsyncStorage.removeItem(key);
+			await SecureStore.deleteItemAsync(key);
 		} catch (e: any) {
-			if (
-				e?.message?.includes("Native module is null") ||
-				e?.message?.includes("legacy storage")
-			) {
-				useMemoryFallback = true;
-				memoryStore.delete(key);
-			} else {
-				throw e;
-			}
+			memoryStore.delete(key);
 		}
 	},
 	async clear() {
-		if (useMemoryFallback) {
+		if (Platform.OS === "web") {
 			memoryStore.clear();
 			return;
 		}
 		try {
-			await AsyncStorage.clear();
+			await SecureStore.deleteItemAsync("auth_token");
+			await SecureStore.deleteItemAsync("auth_user");
 		} catch (e: any) {
-			if (
-				e?.message?.includes("Native module is null") ||
-				e?.message?.includes("legacy storage")
-			) {
-				useMemoryFallback = true;
-				memoryStore.clear();
-			} else {
-				throw e;
-			}
+			// Ignore
 		}
+		memoryStore.clear();
 	},
 };

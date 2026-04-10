@@ -29,6 +29,7 @@ export const loginUser = createAsyncThunk(
 			const response = await fetch(getBaseApiUrl() + "/auth/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
+				credentials: "include",
 				body: JSON.stringify(credentials),
 			});
 
@@ -37,8 +38,12 @@ export const loginUser = createAsyncThunk(
 			}
 
 			const data = await response.json();
-			await storage.setItem("auth_token", data.token);
-			await storage.setItem("auth_user", JSON.stringify(data.user));
+			if (data.token) {
+				await storage.setItem("auth_token", data.token);
+			}
+			if (data.user) {
+				await storage.setItem("auth_user", JSON.stringify(data.user));
+			}
 
 			return data;
 		} catch (err: any) {
@@ -51,9 +56,8 @@ export const logoutUser = createAsyncThunk(
 	"identity/logout",
 	async (_, { rejectWithValue }) => {
 		try {
-			await fetch(getBaseApiUrl() + "/auth/logout", { method: "POST" });
-			await storage.removeItem("auth_token");
-			await storage.removeItem("auth_user");
+			await fetch(getBaseApiUrl() + "/auth/logout", { method: "POST", credentials: "include" });
+			await storage.clear();
 			return true;
 		} catch (err: any) {
 			return rejectWithValue(err.message);
@@ -63,11 +67,22 @@ export const logoutUser = createAsyncThunk(
 
 export const hydrateAuth = createAsyncThunk("identity/hydrate", async () => {
 	const token = await storage.getItem("auth_token");
-	const userStr = await storage.getItem("auth_user");
-	if (token && userStr) {
-		return { token, user: JSON.parse(userStr) };
+	const headers: Record<string, string> = { "Content-Type": "application/json" };
+	if (token) {
+		headers["Authorization"] = `Bearer ${token}`;
 	}
-	throw new Error("No auth state found");
+
+	const response = await fetch(getBaseApiUrl() + "/auth/me", {
+		headers,
+		credentials: "include",
+	});
+
+	if (!response.ok) {
+		throw new Error("No valid session");
+	}
+
+	const data = await response.json();
+	return { token, user: data.user };
 });
 
 const identitySlice = createSlice({

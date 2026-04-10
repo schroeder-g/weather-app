@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storage } from "@/lib/storage";
 import { configureStore } from "@reduxjs/toolkit";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
@@ -23,6 +23,15 @@ const server = setupServer(
 			token: "valid-token",
 		});
 	}),
+	http.get(getBaseApiUrl() + "/auth/me", ({ request }) => {
+		const authHeader = request.headers.get("Authorization");
+		if (authHeader === "Bearer persisted-token" || authHeader === "Bearer valid-token") {
+			return HttpResponse.json({
+				user: { id: "usr_1", name: "Jane Doe", email: "jane@whether.io" },
+			});
+		}
+		return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
+	}),
 	http.post(getBaseApiUrl() + "/auth/logout", () => {
 		return HttpResponse.json({ success: true });
 	}),
@@ -31,7 +40,7 @@ const server = setupServer(
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => {
 	server.resetHandlers();
-	AsyncStorage.clear();
+	storage.clear();
 });
 afterAll(() => server.close());
 
@@ -53,7 +62,7 @@ describe("Identity Feature (TDD)", () => {
 		expect(state.user).toBeNull();
 		expect(state.status).toBe("failed");
 
-		const storedToken = await AsyncStorage.getItem("auth_token");
+		const storedToken = await storage.getItem("auth_token");
 		expect(storedToken).toBeNull();
 	});
 
@@ -69,7 +78,7 @@ describe("Identity Feature (TDD)", () => {
 		expect(state.user?.email).toBe("jane@whether.io");
 		expect(state.status).toBe("succeeded");
 
-		const storedToken = await AsyncStorage.getItem("auth_token");
+		const storedToken = await storage.getItem("auth_token");
 		expect(storedToken).toBe("valid-token");
 	});
 
@@ -85,13 +94,13 @@ describe("Identity Feature (TDD)", () => {
 		expect(state.isAuthenticated).toBe(false);
 		expect(state.user).toBeNull();
 
-		const storedToken = await AsyncStorage.getItem("auth_token");
+		const storedToken = await storage.getItem("auth_token");
 		expect(storedToken).toBeNull();
 	});
 
 	it("hydrates auth state from async storage if valid token exists", async () => {
-		await AsyncStorage.setItem("auth_token", "persisted-token");
-		await AsyncStorage.setItem(
+		await storage.setItem("auth_token", "persisted-token");
+		await storage.setItem(
 			"auth_user",
 			JSON.stringify({
 				id: "usr_1",
