@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { storage } from "@/lib/storage";
+import { getBaseApiUrl } from "@/lib/apiUtils";
 
 export interface User {
 	id: string;
@@ -25,7 +26,7 @@ export const loginUser = createAsyncThunk(
 	"identity/login",
 	async (credentials: any, { rejectWithValue }) => {
 		try {
-			const response = await fetch("https://api.whether.io/auth/login", {
+			const response = await fetch(getBaseApiUrl() + "/auth/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(credentials),
@@ -50,7 +51,7 @@ export const logoutUser = createAsyncThunk(
 	"identity/logout",
 	async (_, { rejectWithValue }) => {
 		try {
-			await fetch("https://api.whether.io/auth/logout", { method: "POST" });
+			await fetch(getBaseApiUrl() + "/auth/logout", { method: "POST" });
 			await storage.removeItem("auth_token");
 			await storage.removeItem("auth_user");
 			return true;

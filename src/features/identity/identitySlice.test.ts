@@ -7,9 +7,10 @@ import identityReducer, {
 	loginUser,
 	logoutUser,
 } from "./identitySlice";
+import { getBaseApiUrl } from "@/lib/apiUtils";
 
 const server = setupServer(
-	http.post("https://api.whether.io/auth/login", async ({ request }) => {
+	http.post(getBaseApiUrl() + "/auth/login", async ({ request }) => {
 		const { email, password } = (await request.json()) as any;
 		if (password === "bad-password") {
 			return HttpResponse.json(
@@ -22,7 +23,7 @@ const server = setupServer(
 			token: "valid-token",
 		});
 	}),
-	http.post("https://api.whether.io/auth/logout", () => {
+	http.post(getBaseApiUrl() + "/auth/logout", () => {
 		return HttpResponse.json({ success: true });
 	}),
 );

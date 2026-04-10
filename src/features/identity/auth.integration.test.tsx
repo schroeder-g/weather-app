@@ -7,6 +7,7 @@ import LoginScreen from "@/app/login";
 import { storage } from "@/lib/storage";
 import { server } from "@/mocks/server";
 import identityReducer from "./identitySlice";
+import { getBaseApiUrl } from "@/lib/apiUtils";
 
 // Mock expo-router
 const mockReplace = jest.fn();
@@ -36,7 +37,7 @@ describe("Auth Integration Test Suite", () => {
 	it("renders login screen and displays error on invalid login", async () => {
 		// Override handler to return 401
 		server.use(
-			http.post("https://api.whether.io/auth/login", () => {
+			http.post(getBaseApiUrl() + "/auth/login", () => {
 				return HttpResponse.json(
 					{ message: "Invalid credentials" },
 					{ status: 401 },
