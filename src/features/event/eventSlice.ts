@@ -150,9 +150,7 @@ export const eventSlice = createSlice({
 			.addCase(fetchInitialLocation.fulfilled, (state, action) => {
 				state.isLocating = false;
 				if (action.payload) {
-					// @ts-expect-error payload is typed as unknown until we fix the action generic, but it will be {name, coordinates}
-					state.location = (action.payload as any).name;
-					// @ts-expect-error
+					state.location = (action.payload).name;
 					state.coordinates = (action.payload as any).coordinates;
 				}
 			})
