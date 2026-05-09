@@ -1,48 +1,48 @@
 {
-	"expo": {
-		"name": "whether",
-		"slug": "whether",
-		"scheme": "whetherapp",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./src/assets/images/icon.png",
-		"scheme": "whether",
-		"userInterfaceStyle": "automatic",
-		"newArchEnabled": true,
-		"splash": {
-			"image": "./src/assets/images/splash-icon.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "com.anonymous.whether"
-		},
-		"android": {
-			"package": "com.anonymous.whether",
-			"adaptiveIcon": {
-				"foregroundImage": "./src/assets/images/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"edgeToEdgeEnabled": true,
-			"predictiveBackGestureEnabled": false
-		},
-		"web": {
-			"bundler": "metro",
-			"output": "server",
-			"favicon": "./src/assets/images/favicon.png"
-		},
-		"plugins": [
-			"expo-router",
-			[
-				"expo-location",
-				{
-					"locationAlwaysAndWhenInUsePermission": "Allow whether to access your location to provide accurate local weather forecasts."
-				}
-			]
-		],
-		"experiments": {
-			"typedRoutes": true
-		}
-	}
+  "expo": {
+    "name": "whether",
+    "slug": "whether",
+    "scheme": "whether",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/images/icon.jpg",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./src/assets/images/icon.jpg",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.whether"
+    },
+    "android": {
+      "package": "com.anonymous.whether",
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/icon.jpg",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "server",
+      "favicon": "./src/assets/images/icon.jpg"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow whether to access your location to provide accurate local weather forecasts."
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
 }

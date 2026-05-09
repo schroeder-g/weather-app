@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useWeatherComparisonContext } from "../WeatherComparisonProvider";
+import { getBaseApiUrl } from "@/lib/apiUtils";
 
 export function WeatherErrorState() {
 	const { state } = useWeatherComparisonContext();
@@ -14,7 +15,10 @@ export function WeatherErrorState() {
 				Could not load weather data.
 			</Text>
 			<Text className="text-destructive/80 text-sm mt-1">
-				Please ensure your location is valid and try again.
+				{JSON.stringify(error)}
+			</Text>
+			<Text className="text-destructive/80 text-sm mt-1 font-mono">
+				URL: {getBaseApiUrl()}
 			</Text>
 		</View>
 	);
